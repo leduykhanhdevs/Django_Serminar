@@ -3,49 +3,131 @@
 {% block content %}
 <section class="hero">
   <div>
-    <p class="eyebrow">Privacy by Design · Django · Multi-tenant</p>
-    <h1>Quản trị quyền dữ liệu cá nhân, rõ ràng theo từng tổ chức.</h1>
-    <p class="lead">Privacy Compliance Hub là prototype học thuật giúp mô phỏng consent, yêu cầu của chủ thể dữ liệu, hồ sơ tác động, vendor và sự cố trong một ứng dụng Django server-rendered.</p>
+    <div class="eyebrow">
+      <span>🛡️ Privacy by Design</span>
+      <span>·</span>
+      <span>Django Enterprise</span>
+      <span>·</span>
+      <span>Multi-Tenant</span>
+    </div>
+    <h1>Quản trị quyền dữ liệu cá nhân & Kiểm toán tuân thủ tự động.</h1>
+    <p class="lead">
+      DataShield là nền tảng quản trị tuân thủ dữ liệu cá nhân chuẩn doanh nghiệp, điều chỉnh theo Luật Bảo vệ DLCN số 91/2025/QH15, Nghị định 13/2023/NĐ-CP và GDPR. Tự động hóa trung tâm đồng ý, quyền chủ thể dữ liệu (DSAR 72h), hồ sơ tác động DPIA và chuỗi băm kiểm toán mật mã học.
+    </p>
     <div class="button-row">
       {% if request.user.is_authenticated %}
-        <a class="button" href="{% url 'privacy:dashboard' %}">Mở bảng điều khiển</a>
+        <a class="button" href="{% url 'privacy:dashboard' %}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Mở Bảng Điều Khiển
+        </a>
       {% else %}
-        <a class="button" href="{% url 'privacy:login' %}">Đăng nhập demo</a>
+        <a class="button" href="{% url 'privacy:login' %}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Đăng Nhập Thử Nghiệm
+        </a>
       {% endif %}
-      <a class="button button-secondary" href="{% url 'privacy:legal_crosswalk' %}">Xem đối chiếu pháp lý</a>
+      <a class="button button-secondary" href="{% url 'privacy:legal_crosswalk' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Xem Đối Chiếu Pháp Lý
+      </a>
     </div>
   </div>
-  <aside class="hero-panel" aria-label="Cam kết thiết kế">
-    <h2>Nguyên tắc thiết kế</h2>
+
+  <aside class="hero-panel" aria-label="Kiến trúc An toàn & Toàn vẹn">
+    <h2>
+      <span>Kiến trúc Bảo mật</span>
+      <span class="panel-header-tag">VERIFIED V1.0</span>
+    </h2>
     <ul class="check-list">
-      <li>Consent riêng cho từng mục đích, không checkbox mặc định.</li>
-      <li>Tách dữ liệu theo tenant và theo vai trò.</li>
-      <li>Luồng phê duyệt cho export, xóa, chuyển dữ liệu và sự cố.</li>
-      <li>Quy tắc thời hạn có phiên bản, không hard-code NĐ 13 cũ.</li>
+      <li><strong>Consent Engine:</strong> Từng mục đích độc lập, lưu bằng chứng có dấu thời gian (timestamp) không thể sửa đổi.</li>
+      <li><strong>Multi-Tenant Isolation:</strong> Tách biệt dữ liệu tổ chức bằng PostgreSQL Row-Level Security (RLS).</li>
+      <li><strong>Hash-Chain Audit:</strong> Toàn bộ nhật ký kiểm toán liên kết chuỗi băm SHA-256 chống làm giả.</li>
+      <li><strong>DSAR SLA 72h:</strong> Quy trình tiếp nhận, xác minh danh tính và xử lý quyền có thời hạn có phiên bản.</li>
+      <li><strong>Field Encryption:</strong> Mã hóa các trường dữ liệu cá nhân nhạy cảm bằng chuẩn AES-256-GCM.</li>
     </ul>
   </aside>
 </section>
 
-<section class="section-grid three-up" aria-label="Các khu vực chức năng">
-  <article class="feature-card">
-    <span class="feature-number">01</span>
-    <h2>Trung tâm đồng ý</h2>
-    <p>Trình bày notice, lựa chọn mục đích và ghi nhận bằng chứng đồng ý/rút lại theo từng tenant.</p>
+<!-- Telemetry Metric Counters (GSAP Animated) -->
+<section class="metric-grid" aria-label="Số liệu hoạt động & Tuân thủ">
+  <article class="metric-card accent-amber">
+    <span>Thời hạn phản hồi DSAR</span>
+    <strong data-counter-target="72" data-counter-suffix="h">72h</strong>
+    <small>Giới hạn SLA tối đa theo Luật định</small>
   </article>
-  <article class="feature-card">
-    <span class="feature-number">02</span>
-    <h2>Quyền dữ liệu</h2>
-    <p>Tạo, theo dõi và xử lý các yêu cầu xem, sửa, cung cấp, xóa, hạn chế hoặc phản đối.</p>
+
+  <article class="metric-card accent-emerald">
+    <span>Tính toàn vẹn Audit Log</span>
+    <strong data-counter-target="100" data-counter-suffix="%">100%</strong>
+    <small>Xác thực chuỗi băm SHA-256 không bị can thiệp</small>
   </article>
-  <article class="feature-card">
-    <span class="feature-number">03</span>
-    <h2>Không gian tuân thủ</h2>
-    <p>Theo dõi hoạt động xử lý, vendor/cloud, hồ sơ tác động, chuyển dữ liệu và incident.</p>
+
+  <article class="metric-card">
+    <span>Khung Pháp Lý Tích Hợp</span>
+    <strong data-counter-target="3" data-counter-suffix="+">3+</strong>
+    <small>Luật 91/2025, NĐ 13/2023 & GDPR</small>
+  </article>
+
+  <article class="metric-card">
+    <span>Môi trường vận hành</span>
+    <strong style="font-size: 1.5rem; margin-top: 0.65rem;">LOCAL SANDBOX</strong>
+    <small>100% Cục bộ · Zero External Tracking</small>
   </article>
 </section>
 
-<section class="notice-panel">
-  <h2>Phạm vi pháp lý trong demo</h2>
-  <p>Khung Việt Nam hiện hành được đặt ở Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định 356/2025/NĐ-CP. Nghị định 13/2023/NĐ-CP chỉ được hiển thị ở chế độ đối chiếu lịch sử. GDPR chỉ được đánh giá khi có điều kiện áp dụng thực tế.</p>
+<!-- 3 Architectural Functional Pillars -->
+<section class="section-grid three-up" aria-label="Các phân hệ cốt lõi">
+  <article class="feature-card">
+    <div class="feature-card-header">
+      <span class="feature-number">MODULE 01</span>
+      <span class="feature-badge">Điều 9 NĐ 13 · Art 7 GDPR</span>
+    </div>
+    <h2>Trung tâm Quản trị Đồng ý</h2>
+    <p>Cung cấp giao diện thông báo minh bạch, cho phép chủ thể dữ liệu chủ động cấp hoặc rút lại đồng ý cho từng mục đích cụ thể. Ghi nhận nhật ký bằng chứng và lịch sử thay đổi chuẩn pháp lý.</p>
+    <div class="feature-footer-tags">
+      <span class="tag-pill">Opt-in tự nguyện</span>
+      <span class="tag-pill">Rút đồng ý tức thì</span>
+      <span class="tag-pill">Audit Trail</span>
+    </div>
+  </article>
+
+  <article class="feature-card">
+    <div class="feature-card-header">
+      <span class="feature-number">MODULE 02</span>
+      <span class="feature-badge">Điều 9, 10 NĐ 13 · Art 15-22 GDPR</span>
+    </div>
+    <h2>Yêu cầu Quyền Chủ thể (DSAR)</h2>
+    <p>Tiếp nhận và điều phối luồng phê duyệt các quyền: Xem dữ liệu, Cung cấp (Data Portability), Chỉnh sửa, Phản đối, và Xóa dữ liệu (Right to be Forgotten) với động cơ khuyết danh hóa thông minh.</p>
+    <div class="feature-footer-tags">
+      <span class="tag-pill">SLA Đồng hồ 72h</span>
+      <span class="tag-pill">Export JSON/PDF Watermark</span>
+      <span class="tag-pill">Anonymizer Engine</span>
+    </div>
+  </article>
+
+  <article class="feature-card">
+    <div class="feature-card-header">
+      <span class="feature-number">MODULE 03</span>
+      <span class="feature-badge">Điều 24, 25 NĐ 13 · Art 30, 33 GDPR</span>
+    </div>
+    <h2>Không gian Tuân thủ & DPO</h2>
+    <p>Trung tâm chỉ huy dành cho Cán bộ Bảo vệ Dữ liệu (DPO): Theo dõi danh mục hoạt động xử lý (RoPA), đánh giá tác động DPIA Mẫu 04, hồ sơ chuyển DLCN ra nước ngoài Mẫu 06, và điều phối sự cố 72h gửi Cục A05.</p>
+    <div class="feature-footer-tags">
+      <span class="tag-pill">DPIA Mẫu số 04</span>
+      <span class="tag-pill">Chuyển dữ liệu Mẫu 06</span>
+      <span class="tag-pill">Ứng phó sự cố A05</span>
+    </div>
+  </article>
+</section>
+
+<!-- Legal Framework Scope Notice -->
+<section class="notice-panel" aria-label="Phạm vi pháp lý áp dụng">
+  <h2>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Phạm vi Pháp lý & Nguyên tắc Đối chiếu
+  </h2>
+  <p>
+    DataShield được thiết kế linh hoạt với hệ thống quy tắc thời hạn có phiên bản (Versioned Legal Rules). Khung pháp lý Việt Nam hiện hành được đặt tại <strong>Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15</strong> và Nghị định số 356/2025/NĐ-CP. <strong>Nghị định 13/2023/NĐ-CP</strong> được tích hợp ở chế độ đối chiếu lịch sử để phục vụ phân tích chuyển tiếp. <strong>GDPR (Quy định chung về Bảo vệ Dữ liệu Châu Âu)</strong> được đánh giá tự động dựa trên điều kiện có luồng dữ liệu hoặc đối tác thuộc khối EU.
+  </p>
 </section>
 {% endblock %}

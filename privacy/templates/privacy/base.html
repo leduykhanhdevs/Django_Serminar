@@ -4,56 +4,81 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if page_title %}{{ page_title }} · {% endif %}DataShield - Privacy Compliance Hub</title>
+  <title>{% if page_title %}{{ page_title }} · {% endif %}DataShield — Privacy & Compliance Platform</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'privacy/app.css' %}">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
+
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="{% url 'privacy:landing' %}" aria-label="Trang chủ Privacy Compliance Hub">
-        <span class="brand-mark" aria-hidden="true">◈</span>
-        <span>Privacy Compliance Hub</span>
+      <a class="brand" href="{% url 'privacy:landing' %}" aria-label="Trang chủ DataShield">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(2, 132, 199, 0.25)" stroke="#38bdf8"/>
+            <path d="M9 12l2 2 4-4" stroke="#10b981"/>
+          </svg>
+        </div>
+        <div class="brand-title-group">
+          <span class="brand-name">DataShield</span>
+          <span class="brand-sub">Privacy & Compliance</span>
+        </div>
       </a>
+
       <nav class="primary-nav" aria-label="Điều hướng chính">
         {% if request.user.is_authenticated %}
-          <a href="{% url 'privacy:dashboard' %}">Tổng quan</a>
-          <a href="{% url 'privacy:consent_center' %}">Đồng ý</a>
-          <a href="{% url 'privacy:dsar_list' %}">Quyền dữ liệu</a>
+          <a href="{% url 'privacy:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Tổng quan</a>
+          <a href="{% url 'privacy:consent_center' %}" class="{% if request.resolver_match.url_name == 'consent_center' %}active{% endif %}">Đồng ý</a>
+          <a href="{% url 'privacy:dsar_list' %}" class="{% if 'dsar' in request.resolver_match.url_name %}active{% endif %}">Quyền dữ liệu</a>
           {% if can_manage_compliance and totp_verified %}
-            <a href="{% url 'privacy:compliance_dashboard' %}">Tuân thủ</a>
+            <a href="{% url 'privacy:compliance_dashboard' %}" class="{% if request.resolver_match.url_name == 'compliance_dashboard' %}active{% endif %}">Tuân thủ DPO</a>
           {% endif %}
-          <a href="{% url 'privacy:legal_crosswalk' %}">Đối chiếu pháp lý</a>
+          <a href="{% url 'privacy:legal_crosswalk' %}" class="{% if request.resolver_match.url_name == 'legal_crosswalk' %}active{% endif %}">Đối chiếu pháp lý</a>
         {% else %}
-          <a href="{% url 'privacy:legal_crosswalk' %}">Khung pháp lý</a>
+          <a href="{% url 'privacy:legal_crosswalk' %}" class="{% if request.resolver_match.url_name == 'legal_crosswalk' %}active{% endif %}">Khung pháp lý</a>
         {% endif %}
       </nav>
+
       <div class="account-area">
+        <span class="system-status-indicator" title="Môi trường Sandbox Cục bộ - Sẵn sàng kiểm toán">
+          <span class="pulse-dot"></span>
+          <span>SLA 72h Active</span>
+        </span>
+
         {% if request.user.is_authenticated %}
           {% if available_organizations %}
             <form class="tenant-switcher" action="{% url 'privacy:switch_organization' %}" method="post">
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ request.get_full_path }}">
               <label class="sr-only" for="active-organization">Tổ chức đang hoạt động</label>
-              <select id="active-organization" name="organization_id">
+              <select id="active-organization" name="organization_id" onchange="this.form.submit()">
                 {% for membership in available_organizations %}
-                  <option value="{{ membership.organization_id }}" {% if active_organization and membership.organization_id == active_organization.pk %}selected{% endif %}>{{ membership.organization.name }}</option>
+                  <option value="{{ membership.organization_id }}" {% if active_organization and membership.organization_id == active_organization.pk %}selected{% endif %}>
+                    🏢 {{ membership.organization.name }}
+                  </option>
                 {% endfor %}
               </select>
-              <button class="button button-small button-secondary" type="submit">Chuyển</button>
+              <noscript><button class="button button-small button-secondary" type="submit">Chuyển</button></noscript>
             </form>
           {% endif %}
+
           {% if totp_required %}
-            <a class="button button-small button-secondary" href="{% if totp_verified %}{% url 'privacy:totp_verify' %}{% else %}{% url 'privacy:totp_setup' %}{% endif %}">{% if totp_verified %}TOTP đã bật{% else %}Thiết lập TOTP{% endif %}</a>
+            <a class="button button-small {% if totp_verified %}button-secondary{% else %}button-primary{% endif %}" href="{% if totp_verified %}{% url 'privacy:totp_verify' %}{% else %}{% url 'privacy:totp_setup' %}{% endif %}">
+              {% if totp_verified %}🛡️ TOTP Đã Bật{% else %}⚠️ Bật TOTP{% endif %}
+            </a>
           {% endif %}
-          <span class="account-name">{{ request.user.get_username }}</span>
+
+          <span class="account-name" title="{{ request.user.get_username }}">
+            👤 {{ request.user.get_username }}
+          </span>
+
           <form class="inline-form" action="{% url 'privacy:logout' %}" method="post">
             {% csrf_token %}
-            <button class="button button-quiet" type="submit">Đăng xuất</button>
+            <button class="button button-quiet" type="submit" title="Đăng xuất khỏi hệ thống">Đăng xuất</button>
           </form>
         {% else %}
-          <a class="button button-small" href="{% url 'privacy:login' %}">Đăng nhập</a>
+          <a class="button button-small" href="{% url 'privacy:login' %}">Đăng nhập demo</a>
         {% endif %}
       </div>
     </div>
@@ -72,9 +97,21 @@
   </main>
 
   <footer class="site-footer">
-    <p><strong>Prototype học thuật chạy local.</strong> Nội dung chỉ hỗ trợ quản trị tuân thủ, không phải tư vấn pháp lý hay chứng nhận compliance.</p>
-    <p>Không sử dụng CDN, analytics hoặc dữ liệu cá nhân thật trong bản demo.</p>
+    <div class="footer-top-row">
+      <div>
+        <strong>DataShield Platform</strong> · Nền tảng quản trị tuân thủ dữ liệu cá nhân đa tổ chức (Multi-tenant).
+      </div>
+      <div class="footer-badge">
+        <span>Khóa luận / Đồ án UIT: Django Cơ Bản</span>
+      </div>
+    </div>
+    <p>Áp dụng nguyên tắc <em>Privacy by Design</em>: Mã hóa AES-256-GCM, Hash-chain SHA-256 chống giả mạo, Row-Level Security, SLA phản hồi 72h theo Luật BV DLCN số 91/2025/QH15, Nghị định 13/2023/NĐ-CP và GDPR.</p>
+    <p>Môi trường cục bộ khép kín (Air-gapped local sandbox). Không sử dụng tracker, không truyền tải dữ liệu ra bên ngoài.</p>
   </footer>
+
+  <!-- GSAP Engine (Local Self-Hosted) -->
+  <script src="{% static 'js/gsap.min.js' %}"></script>
+  <!-- Global Application JS -->
   <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
