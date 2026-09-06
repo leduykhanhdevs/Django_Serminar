@@ -1,144 +1,85 @@
 /**
  * DataShield: Enterprise Privacy & Compliance Platform
  * Interactive Animations & GSAP Controller
- * UIT Course: Django Cơ Bản (4 tín chỉ) - Đồ án Seminar
+ * Rock-solid visibility: Zero FOUC / Zero FOIC. All elements visible by default.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Verify GSAP availability
+  // Ensure all elements are immediately visible
+  document.querySelectorAll(".hero, .feature-card, .metric-card, .content-card, .notice-panel, .hero-panel")
+    .forEach(el => {
+      el.style.opacity = "1";
+      el.style.visibility = "visible";
+    });
+
+  // Verify GSAP availability
   if (typeof gsap === "undefined") {
-    console.warn("GSAP is not loaded. Skipping animations.");
+    console.info("GSAP running in static fallback mode.");
     return;
   }
 
-  // 2. Set up matchMedia for accessibility (respect prefers-reduced-motion)
-  const mm = gsap.matchMedia();
+  // Check prefers-reduced-motion
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReduced) {
+    console.info("Reduced motion active. Animations disabled.");
+    return;
+  }
 
-  mm.add("(prefers-reduced-motion: no-preference)", () => {
-    // Master timeline for initial load
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-    // Stagger Header / Navbar elements
-    if (document.querySelector(".site-header")) {
-      tl.from(".site-header", {
-        y: -18,
-        opacity: 0,
-        duration: 0.6,
-      });
-    }
-
-    // Hero Section Sequence
-    const hero = document.querySelector(".hero");
-    if (hero) {
-      tl.from(".hero .eyebrow", {
+  // 1. Subtle, high-performance entrance (ONLY translateY, NEVER opacity 0)
+  try {
+    const heroElements = document.querySelectorAll(".hero h1, .hero .lead, .hero .button-row, .hero-panel");
+    if (heroElements.length > 0) {
+      gsap.from(heroElements, {
         y: 12,
-        opacity: 0,
-        duration: 0.5,
-      }, "-=0.2")
-      .from(".hero h1", {
-        y: 20,
-        opacity: 0,
-        duration: 0.7,
-        letterSpacing: "0.02em",
-      }, "-=0.3")
-      .from(".hero .lead", {
-        y: 16,
-        opacity: 0,
-        duration: 0.6,
-      }, "-=0.4")
-      .from(".hero .button-row a", {
-        y: 12,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.5,
-      }, "-=0.3")
-      .from(".hero-panel", {
-        x: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out",
-      }, "-=0.6")
-      .from(".hero-panel li", {
-        x: 15,
-        opacity: 0,
-        stagger: 0.08,
         duration: 0.4,
-      }, "-=0.4");
-    }
-
-    // Metric Cards Stagger & Counter Animation
-    const metricCards = document.querySelectorAll(".metric-card");
-    if (metricCards.length > 0) {
-      tl.from(metricCards, {
-        y: 25,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.6,
-        ease: "back.out(1.2)",
-      }, "-=0.3");
-
-      // Animate numeric counters if present
-      const counters = document.querySelectorAll("[data-counter-target]");
-      counters.forEach((el) => {
-        const target = parseFloat(el.getAttribute("data-counter-target")) || 0;
-        const suffix = el.getAttribute("data-counter-suffix") || "";
-        const obj = { val: 0 };
-
-        gsap.to(obj, {
-          val: target,
-          duration: 1.6,
-          ease: "power2.out",
-          delay: 0.4,
-          onUpdate: () => {
-            el.textContent = Math.round(obj.val) + suffix;
-          },
-        });
+        stagger: 0.08,
+        ease: "power2.out",
+        clearProps: "all"
       });
     }
 
-    // Three-up Feature Cards Stagger
-    const featureCards = document.querySelectorAll(".feature-card");
-    if (featureCards.length > 0) {
-      tl.from(featureCards, {
-        y: 30,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.7,
+    const cards = document.querySelectorAll(".metric-card, .feature-card");
+    if (cards.length > 0) {
+      gsap.from(cards, {
+        y: 16,
+        duration: 0.45,
+        stagger: 0.06,
         ease: "power2.out",
-      }, "-=0.3");
+        clearProps: "transform"
+      });
     }
+  } catch (err) {
+    console.warn("GSAP entrance notice:", err);
+  }
 
-    // Notice & Legal Panels
-    const noticePanels = document.querySelectorAll(".notice-panel, .legal-notice");
-    if (noticePanels.length > 0) {
-      tl.from(noticePanels, {
-        y: 18,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 0.6,
-      }, "-=0.2");
-    }
+  // 2. Telemetry Number Counters (Smooth count up without hiding initial values)
+  try {
+    const counters = document.querySelectorAll("[data-counter-target]");
+    counters.forEach((el) => {
+      const target = parseFloat(el.getAttribute("data-counter-target")) || 0;
+      const suffix = el.getAttribute("data-counter-suffix") || "";
+      const obj = { val: 0 };
 
-    // Dashboard Content Cards
-    const contentCards = document.querySelectorAll(".content-card");
-    if (contentCards.length > 0) {
-      tl.from(contentCards, {
-        y: 20,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.6,
-      }, "-=0.2");
-    }
-  });
+      gsap.to(obj, {
+        val: target,
+        duration: 1.2,
+        ease: "power2.out",
+        onUpdate: () => {
+          el.textContent = Math.round(obj.val) + suffix;
+        },
+      });
+    });
+  } catch (err) {
+    console.warn("Counter animation notice:", err);
+  }
 
-  // 3. Interactive Micro-Interactions: Card Tilt & Hover Glow
-  const cards = document.querySelectorAll(".feature-card, .hero-panel");
-  cards.forEach((card) => {
+  // 3. Interactive Micro-Interactions: Card Tilt & Subtle Glow
+  const interactiveCards = document.querySelectorAll(".feature-card, .metric-card, .hero-panel");
+  interactiveCards.forEach((card) => {
     card.addEventListener("mouseenter", () => {
       gsap.to(card, {
-        y: -4,
-        boxShadow: "0 16px 36px -6px rgba(0, 0, 0, 0.6), 0 0 24px rgba(56, 189, 248, 0.2)",
-        duration: 0.25,
+        y: -3,
+        duration: 0.2,
         ease: "power1.out",
       });
     });
@@ -146,30 +87,25 @@ document.addEventListener("DOMContentLoaded", () => {
     card.addEventListener("mouseleave", () => {
       gsap.to(card, {
         y: 0,
-        boxShadow: "0 8px 24px -4px rgba(0, 0, 0, 0.45)",
-        duration: 0.35,
+        duration: 0.25,
         ease: "power1.out",
       });
     });
   });
 
-  // 4. Flash Message Auto-dismiss with GSAP
+  // 4. Flash Alerts Auto-dismiss
   const flashes = document.querySelectorAll(".flash");
-  if (flashes.length > 0) {
-    flashes.forEach((flash) => {
-      // Auto dismiss after 6 seconds
-      gsap.delayedCall(6, () => {
-        gsap.to(flash, {
-          x: 60,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.in",
-          onComplete: () => flash.remove(),
-        });
+  flashes.forEach((flash) => {
+    gsap.delayedCall(5, () => {
+      gsap.to(flash, {
+        x: 40,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.in",
+        onComplete: () => flash.remove(),
       });
     });
-  }
+  });
 
-  // 5. Log initialization for audit verification
-  console.info("🛡️ DataShield: Enterprise Privacy UI & GSAP Engine initialized successfully.");
+  console.info("🛡️ DataShield UI & GSAP Engine initialized.");
 });
