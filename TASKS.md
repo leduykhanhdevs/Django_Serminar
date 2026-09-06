@@ -56,7 +56,7 @@
 #### 🛡️ Nhóm trưởng: Lê Duy Khánh (Nhánh `main`)
 - [x] **Task K1.1:** Khởi tạo cấu trúc dự án, thiết lập Git repository và cấu hình phân nhánh `main` & `nguyen-van-hieu`.
 - [x] **Task K1.2:** Soạn thảo bộ quy chuẩn làm việc (`CONTRIBUTING.md`, `AI_RULES.md`, `.cursorrules`, `TASKS.md`).
-- [ ] **Task K1.3:** Kiểm tra và hoàn thiện môi trường chạy cục bộ và Docker Compose (PostgreSQL RLS, Redis, Celery, Mailpit).
+- [x] **Task K1.3:** Kiểm tra và hoàn thiện môi trường chạy cục bộ và Docker Compose (PostgreSQL RLS, Redis, Celery, Mailpit).
 - [ ] **Task K1.4:** Tối ưu hóa hàm kiểm toán chuỗi băm `verify_audit_chain()` phục vụ kịch bản live demo trước lớp.
 - [ ] **Task K1.5:** Hỗ trợ Thành viên 2 chuẩn bị dữ liệu mẫu (`seed_demo`) phục vụ thuyết trình Seminar.
 - [ ] **Task K1.6:** Cùng Thành viên 2 hoàn thiện Slide thuyết trình Seminar (Phần Kiến trúc kỹ thuật & Security).
