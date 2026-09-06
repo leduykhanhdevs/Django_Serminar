@@ -20,6 +20,22 @@
 
 ---
 
+### NGUYÊN TẮC ATOMIC: CHỈ LÀM TỪNG TASK NHỎ, TỰ KIỂM TRA LẠI & CẬP NHẬT TIẾN ĐỘ
+1. **Chỉ làm từng task nhỏ một (One Atomic Task at a Time):**
+   - **TUYỆT ĐỐI KHÔNG làm "một lèo" nhiều task cùng lúc.**
+   - Mỗi lần chỉ tập trung thực hiện trọn vẹn MỘT task nhỏ cụ thể được định nghĩa trong `TASKS.md`.
+2. **Quy trình Bắt buộc Tự kiểm tra lại 1 lần (Mandatory Self-Verification Step):**
+   - Sau khi hoàn thành code của task nhỏ, AI **KHÔNG ĐƯỢC** báo cáo xong ngay lập tức.
+   - AI **BẮT BUỘC** phải tự động chạy kiểm tra lại:
+     - Chạy `python manage.py check` để đảm bảo hệ thống Django không có lỗi cấu hình.
+     - Chạy `pytest` để đảm bảo toàn bộ bộ kiểm thử vượt qua 100%, không gây lỗi hồi quy (*regression*).
+     - Rà soát lại diff code để đảm bảo tuân thủ Clean Code và không vi phạm bảo mật.
+3. **Đánh dấu hoàn thành vào `TASKS.md` (Update Progress):**
+   - Chỉ sau khi bước tự kiểm tra thành công 100%, AI mới được mở tệp `TASKS.md` và chuyển `[ ]` thành `[x]` ở task tương ứng.
+   - Báo cáo rõ ràng cho người dùng: Tên task đã làm, kết quả tự kiểm tra (output của test), và xác nhận đã đánh dấu hoàn thành trong `TASKS.md`.
+
+---
+
 ### NGUYÊN TẮC 1: TUÂN THỦ CHUẨN CẤU TRÚC GIẢNG DẠY (UIT DJANGO SLIDES B1, B2, B3)
 
 #### 1.1. Cấu trúc thư mục Static chuẩn (Slide 29-31 Buổi 2)

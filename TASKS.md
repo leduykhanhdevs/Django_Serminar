@@ -25,6 +25,13 @@
 > 3. **URL Reverse:** Dùng `{% url 'privacy:route' %}` và `redirect('privacy:route')`, không hard-code URL.
 > 4. **Model & Admin:** Mọi Model có `__str__`, `related_name` cho ForeignKey, và đăng ký `@admin.register` trong `admin.py`.
 
+
+> [!IMPORTANT]
+> ### ⚡ QUY TẮC THỰC HIỆN TASK BẮT BUỘC DÀNH CHO AI
+> 1. **CHỈ LÀM TỪNG TASK NHỎ MỘT:** Tuyệt đối không làm gộp, không làm một lèo nhiều task. Xong dứt điểm task này mới được chuyển sang task khác.
+> 2. **TỰ KIỂM TRA LẠI 1 LẦN TRƯỚC KHI BÁO CÁO:** Sau khi code xong, AI bắt buộc phải tự chạy `python manage.py check` và `pytest` để kiểm chứng.
+> 3. **ĐÁNH DẤU HOÀN THÀNH:** Sau khi kiểm tra đạt 100%, AI tự động cập nhật đổi `[ ]` thành `[x]` trong file `TASKS.md` này rồi mới báo cáo cho người dùng.
+
 ## 🗺️ RANH GIỚI PHẠM VI TRÁCH NHIỆM & TỆP TIN (FILE BOUNDARIES)
 
 Để tránh xung đột code giữa 2 thành viên, ranh giới file được phân chia rõ ràng như sau:

@@ -1,3 +1,8 @@
+# ATOMIC EXECUTION & VERIFICATION PROTOCOL (STRICT):
+# - DO ONLY ONE SMALL TASK AT A TIME. DO NOT DO A BATCH ("không làm một lèo").
+# - MANDATORY SELF-VERIFICATION: Run `python manage.py check` and `pytest` before reporting done.
+# - MARK COMPLETED: Update `TASKS.md` from `[ ]` to `[x]` upon passing tests.
+
 # DataShield Project Rules for Cursor / AI Assistants
 
 You are assisting on "DataShield: Django Privacy & Compliance Platform".

@@ -85,3 +85,12 @@
   - `test(...)`: Thêm hoặc chỉnh sửa test
   - `refactor(...)`: Tối ưu hóa code mà không thay đổi logic
 - Không bao giờ commit các file rác, file môi trường: `.env`, `db.sqlite3`, `__pycache__`, `.venv`.
+
+---
+
+## 4. QUY TẮC THỰC HIỆN TASK VÀ SỬ DỤNG AI (ATOMIC & VERIFY)
+1. **Chỉ làm từng task nhỏ một:** Tuyệt đối không làm gộp nhiều task cùng lúc ("không làm một lèo"). Mỗi commit hoặc pull request chỉ giải quyết một đơn vị công việc độc lập.
+2. **Tự kiểm tra lại 1 lần trước khi thông báo hoàn thành:**
+   - Chạy `python manage.py check` kiểm tra hệ thống.
+   - Chạy `pytest` kiểm tra tính năng và đảm bảo không làm vỡ các bài test cũ.
+3. **Cập nhật tiến độ trong `TASKS.md`:** Đánh dấu `[x]` vào checklist của task tương ứng khi đã tự kiểm tra thành công 100%.
