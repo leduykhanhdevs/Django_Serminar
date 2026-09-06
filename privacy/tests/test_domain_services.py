@@ -13,16 +13,20 @@ from privacy.models import (
     Organization,
     ProcessingPurpose,
     RuleVersion,
+    AuditChainReport,
 )
 from privacy.services import (
     approve_case,
     consent_is_active,
     create_dsar_case,
     record_consent,
+    restore_audit_event,
+    simulate_audit_tampering,
     verify_audit_chain,
     withdraw_consent,
 )
 from privacy.tenant_context import tenant_context
+
 
 
 class DomainServiceTests(TestCase):
@@ -77,3 +81,53 @@ class DomainServiceTests(TestCase):
             self.assertIsNotNone(case.due_at)
             approved = approve_case(case=case, officer=self.officer)
             self.assertEqual(approved.status, approved.Status.APPROVED)
+
+    def test_audit_chain_verification_report_and_tamper_detection(self):
+        with tenant_context(str(self.organization.pk)):
+            # 1. Create a chain of audit events
+            event = record_consent(
+                organization=self.organization,
+                subject_email=self.subject.email,
+                purpose=self.purpose,
+                notice_version=self.notice,
+                actor=self.subject,
+            )
+            withdraw_consent(event=event, actor=self.subject)
+
+            # 2. Test full report return
+            report = verify_audit_chain(organization=self.organization, return_report=True)
+            self.assertIsInstance(report, AuditChainReport)
+            self.assertTrue(report.is_valid)
+            self.assertEqual(report.total_events, 2)
+            self.assertEqual(report.errors, [])
+            self.assertGreaterEqual(report.duration_ms, 0)
+            self.assertIsNone(report.tampered_sequence)
+
+            # 3. Test backward compatible tuple unpacking
+            valid, errors = verify_audit_chain(organization=self.organization, details=True)
+            self.assertTrue(valid)
+            self.assertEqual(errors, [])
+
+            # 4. Test boolean casting
+            self.assertTrue(verify_audit_chain(organization=self.organization))
+
+            # 5. Simulate unauthorized tampering on sequence 1
+            simulate_audit_tampering(
+                organization=self.organization,
+                sequence=1,
+                tampered_metadata={"hacked": True},
+            )
+
+            # 6. Verify tampering detection
+            tampered_report = verify_audit_chain(organization=self.organization, return_report=True)
+            self.assertFalse(tampered_report.is_valid)
+            self.assertEqual(tampered_report.tampered_sequence, 1)
+            self.assertGreater(len(tampered_report.errors), 0)
+            self.assertIn("Hash audit không hợp lệ tại sequence 1", tampered_report.errors[0])
+
+            # 7. Restore and re-verify
+            restore_audit_event(organization=self.organization, sequence=1)
+            restored_report = verify_audit_chain(organization=self.organization, return_report=True)
+            self.assertTrue(restored_report.is_valid)
+            self.assertEqual(restored_report.errors, [])
+

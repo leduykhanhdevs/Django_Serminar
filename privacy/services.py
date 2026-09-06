@@ -36,6 +36,7 @@ from .models import (
     RuleVersion,
     Transfer,
     Vendor,
+    AuditChainReport,
     verify_audit_chain as _verify_audit_chain,
 )
 from .tenant_context import get_current_organization_id, tenant_context
@@ -602,8 +603,83 @@ def approve_workflow_item(*, item, officer, actor=None):
     raise WorkflowValidationError("Loại đối tượng không hỗ trợ workflow phê duyệt.")
 
 
-def verify_audit_chain(*, organization: Organization | str, details: bool = False):
-    """Expose a boolean to the dashboard, with optional errors for tests/admin."""
+def verify_audit_chain(
+    *,
+    organization: Organization | str,
+    details: bool = False,
+    return_report: bool = False,
+):
+    """Expose a boolean to the dashboard, with optional errors or full AuditChainReport."""
 
-    valid, errors = _verify_audit_chain(organization)
-    return (valid, errors) if details else valid
+    report = _verify_audit_chain(organization)
+    if return_report:
+        return report
+    return (report.is_valid, report.errors) if details else report.is_valid
+
+
+def simulate_audit_tampering(
+    *,
+    organization: Organization | str,
+    sequence: int,
+    tampered_metadata: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Demonstrate database tampering detection for seminar live presentations.
+
+    Uses direct queryset update to bypass model-level immutable validation guards.
+    Returns backup information needed to restore the original record.
+    """
+    org_id = getattr(organization, "pk", organization)
+    event = AuditEvent.all_objects.filter(organization_id=org_id, sequence=sequence).first()
+    if not event:
+        raise WorkflowValidationError(f"Không tìm thấy AuditEvent tại sequence {sequence}.")
+
+    backup = {
+        "event_id": str(event.pk),
+        "sequence": event.sequence,
+        "original_metadata": dict(event.metadata),
+        "original_hash": event.event_hash,
+    }
+
+    # Embed original backup inside metadata for 100% deterministic restoration
+    injected_metadata = dict(event.metadata)
+    injected_metadata["_backup_original_metadata"] = dict(event.metadata)
+    injected_metadata["_backup_original_hash"] = event.event_hash
+    injected_metadata.update(tampered_metadata or {"_tampered_by": "unauthorized_actor", "illicit_modification": True})
+
+    AuditEvent.all_objects.filter(pk=event.pk).update(metadata=injected_metadata)
+    return backup
+
+
+def restore_audit_event(
+    *,
+    organization: Organization | str,
+    sequence: int,
+    original_metadata: dict[str, Any] | None = None,
+    original_hash: str | None = None,
+) -> bool:
+    """Restore an audit event to its pristine cryptographic state after a live demo."""
+    org_id = getattr(organization, "pk", organization)
+    event = AuditEvent.all_objects.filter(organization_id=org_id, sequence=sequence).first()
+    if not event:
+        raise WorkflowValidationError(f"Không tìm thấy AuditEvent tại sequence {sequence}.")
+
+    if original_metadata is not None and original_hash is not None:
+        AuditEvent.all_objects.filter(pk=event.pk).update(metadata=original_metadata, event_hash=original_hash)
+    elif "_backup_original_metadata" in event.metadata and "_backup_original_hash" in event.metadata:
+        restored_meta = dict(event.metadata["_backup_original_metadata"])
+        restored_hash = str(event.metadata["_backup_original_hash"])
+        AuditEvent.all_objects.filter(pk=event.pk).update(metadata=restored_meta, event_hash=restored_hash)
+    else:
+        # Fallback: Clean illicit demo keys if present
+        clean_metadata = dict(event.metadata)
+        clean_metadata.pop("_tampered_by", None)
+        clean_metadata.pop("illicit_modification", None)
+        clean_metadata.pop("_demo_tampered", None)
+        clean_metadata.pop("actor_compromised", None)
+        event.metadata = clean_metadata
+        recalculated = event.calculate_hash()
+        AuditEvent.all_objects.filter(pk=event.pk).update(metadata=clean_metadata, event_hash=recalculated)
+
+    return True
+
+

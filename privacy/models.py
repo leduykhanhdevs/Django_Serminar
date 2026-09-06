@@ -9,9 +9,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
 import uuid
+from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Any
+
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -1065,20 +1068,108 @@ class AuditEvent(TenantScopedModel):
         raise ValidationError("AuditEvent là bản ghi bất biến, không thể xóa.")
 
 
-def verify_audit_chain(organization: Organization | str) -> tuple[bool, list[str]]:
-    """Return whether a ledger is intact and human-readable integrity errors."""
+@dataclass
+class AuditChainReport:
+    """Detailed cryptographic audit report designed for live-demos and compliance dashboards.
 
+    Implements tuple unpacking (is_valid, errors), indexing, and boolean casting
+    for 100% backward compatibility with legacy code.
+    """
+
+    is_valid: bool
+    total_events: int
+    errors: list[str] = field(default_factory=list)
+    duration_ms: float = 0.0
+    tampered_sequence: int | None = None
+    tampered_event_id: str | None = None
+    first_tampered_details: dict[str, Any] | None = None
+
+    def __iter__(self):
+        """Allow legacy tuple unpacking: valid, errors = verify_audit_chain(...)"""
+        yield self.is_valid
+        yield self.errors
+
+    def __bool__(self):
+        """Allow direct boolean checks: if verify_audit_chain(...):"""
+        return self.is_valid
+
+    def __getitem__(self, index):
+        """Allow indexed access: res[0], res[1]"""
+        return (self.is_valid, self.errors)[index]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "is_valid": self.is_valid,
+            "total_events": self.total_events,
+            "errors": self.errors,
+            "duration_ms": round(self.duration_ms, 3),
+            "tampered_sequence": self.tampered_sequence,
+            "tampered_event_id": self.tampered_event_id,
+            "first_tampered_details": self.first_tampered_details,
+        }
+
+
+def verify_audit_chain(organization: Organization | str) -> AuditChainReport:
+    """Return whether an organization's audit hash-chain is intact with rich diagnostics."""
+
+    start_time = time.perf_counter()
     organization_id = getattr(organization, "pk", organization)
     errors: list[str] = []
     previous_hash = ""
     expected_sequence = 1
-    for event in AuditEvent.all_objects.filter(organization_id=organization_id).order_by("sequence"):
+    total_events = 0
+    tampered_sequence: int | None = None
+    tampered_event_id: str | None = None
+    first_tampered_details: dict[str, Any] | None = None
+
+    # Use .iterator(chunk_size=1000) for streaming performance without loading all models into RAM
+    events = AuditEvent.all_objects.filter(organization_id=organization_id).order_by("sequence").iterator(chunk_size=1000)
+
+    for event in events:
+        total_events += 1
+        event_is_tampered = False
+
         if event.sequence != expected_sequence:
-            errors.append(f"Chuỗi audit thiếu hoặc lặp tại sequence {event.sequence}.")
+            err = f"Chuỗi audit thiếu hoặc lặp tại sequence {event.sequence} (kỳ vọng: {expected_sequence})."
+            errors.append(err)
+            event_is_tampered = True
+
         if event.previous_hash != previous_hash:
-            errors.append(f"Liên kết hash trước không hợp lệ tại sequence {event.sequence}.")
-        if event.event_hash != event.calculate_hash():
-            errors.append(f"Hash audit không hợp lệ tại sequence {event.sequence}.")
+            err = f"Liên kết hash trước không hợp lệ tại sequence {event.sequence}."
+            errors.append(err)
+            event_is_tampered = True
+
+        calculated_hash = event.calculate_hash()
+        if event.event_hash != calculated_hash:
+            err = f"Hash audit không hợp lệ tại sequence {event.sequence} (ghi nhận: {event.event_hash[:12]}..., tính lại: {calculated_hash[:12]}...)."
+            errors.append(err)
+            event_is_tampered = True
+
+        if event_is_tampered and tampered_sequence is None:
+            tampered_sequence = event.sequence
+            tampered_event_id = str(event.pk)
+            first_tampered_details = {
+                "sequence": event.sequence,
+                "event_id": str(event.pk),
+                "recorded_hash": event.event_hash,
+                "calculated_hash": calculated_hash,
+                "expected_previous_hash": previous_hash,
+                "recorded_previous_hash": event.previous_hash,
+                "event_type": event.event_type,
+            }
+
         previous_hash = event.event_hash
         expected_sequence += 1
-    return (not errors, errors)
+
+    duration_ms = (time.perf_counter() - start_time) * 1000.0
+
+    return AuditChainReport(
+        is_valid=(len(errors) == 0),
+        total_events=total_events,
+        errors=errors,
+        duration_ms=duration_ms,
+        tampered_sequence=tampered_sequence,
+        tampered_event_id=tampered_event_id,
+        first_tampered_details=first_tampered_details,
+    )
+
