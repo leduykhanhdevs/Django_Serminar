@@ -26,6 +26,11 @@
 > 4. **Model & Admin:** Mọi Model có `__str__`, `related_name` cho ForeignKey, và đăng ký `@admin.register` trong `admin.py`.
 
 
+
+> [!CAUTION]
+> ### 🔄 BƯỚC 0 BẮT BUỘC TRƯỚC KHI CODE (PRE-EXECUTION GIT PULL)
+> Mỗi khi AI bắt đầu làm việc, **BẮT BUỘC PHẢI CHẠY `git pull`** để lấy bản code mới nhất từ GitHub về, đọc kỹ các thay đổi của thành viên và dựa trên nền tảng đó mới được code tiếp.
+
 > [!IMPORTANT]
 > ### ⚡ QUY TẮC THỰC HIỆN TASK BẮT BUỘC DÀNH CHO AI
 > 1. **CHỈ LÀM TỪNG TASK NHỎ MỘT:** Tuyệt đối không làm gộp, không làm một lèo nhiều task. Xong dứt điểm task này mới được chuyển sang task khác.

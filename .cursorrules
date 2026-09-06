@@ -1,3 +1,7 @@
+# PRE-EXECUTION MANDATORY STEP:
+# - EVERY TIME AI RUNS: ALWAYS run `git pull` to fetch the latest code from GitHub.
+# - Read and inspect the newly pulled changes before doing any task.
+
 # ATOMIC EXECUTION & VERIFICATION PROTOCOL (STRICT):
 # - DO ONLY ONE SMALL TASK AT A TIME. DO NOT DO A BATCH ("không làm một lèo").
 # - MANDATORY SELF-VERIFICATION: Run `python manage.py check` and `pytest` before reporting done.

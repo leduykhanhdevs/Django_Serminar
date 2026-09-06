@@ -9,6 +9,18 @@
 
 ---
 
+### NGUYÊN TẮC TIÊN QUYẾT: BƯỚC 0 - BẮT BUỘC GIT PULL BẢN MỚI NHẤT VỀ TRƯỚC KHI CODE
+Mỗi khi AI khởi động phiên làm việc hoặc nhận bất kỳ yêu cầu code/task nào từ người dùng, AI **BẮT BUỘC PHẢI THỰC HIỆN THEO ĐÚNG TRÌNH TỰ**:
+1. **Thực hiện `git pull` lập tức:**
+   - Kiểm tra nhánh hiện tại (`git branch --show-current`).
+   - Kéo toàn bộ cập nhật mới nhất từ GitHub về:
+     - Nếu đang ở nhánh `main`: chạy `git pull origin main`.
+     - Nếu đang ở nhánh `nguyen-van-hieu`: chạy `git pull origin nguyen-van-hieu` và đồng bộ từ `main` nếu cần (`git merge main`).
+2. **Đọc kỹ các thay đổi mới:** Xem các tệp vừa được cập nhật, đọc lại logic liên quan để ghi nhớ trạng thái mã nguồn mới nhất.
+3. **Dựa vào mã nguồn mới nhất đó mới được làm tiếp:** Tuyệt đối không viết code trên nền mã nguồn cũ khi chưa pull, triệt tiêu 100% nguy cơ ghi đè code của thành viên khác hoặc gây xung đột Git (*Merge Conflicts*).
+
+---
+
 ### NGUYÊN TẮC 0: ĐỌC KỸ FILE TASKS.MD VÀ XÁC ĐỊNH RANH GIỚI TRÁCH NHIỆM
 1. **BẮT BUỘC ĐỌC `TASKS.md`:** Trước khi thực hiện bất kỳ chỉ thị code nào, AI **PHẢI ĐỌC KỸ FILE `TASKS.md`** để biết rõ:
    - Ai là người đang yêu cầu (Lê Duy Khánh hay Nguyễn Văn Hiếu)?

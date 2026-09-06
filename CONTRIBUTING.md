@@ -89,6 +89,9 @@
 ---
 
 ## 4. QUY TẮC THỰC HIỆN TASK VÀ SỬ DỤNG AI (ATOMIC & VERIFY)
+
+0. **Luôn chạy `git pull` đầu tiên:** Mỗi khi mở máy hoặc bắt đầu một phiên làm việc với AI, bắt buộc chạy `git pull` để nhận toàn bộ code mới nhất của đồng đội, đọc kỹ mã nguồn mới trước khi viết code tiếp theo.
+
 1. **Chỉ làm từng task nhỏ một:** Tuyệt đối không làm gộp nhiều task cùng lúc ("không làm một lèo"). Mỗi commit hoặc pull request chỉ giải quyết một đơn vị công việc độc lập.
 2. **Tự kiểm tra lại 1 lần trước khi thông báo hoàn thành:**
    - Chạy `python manage.py check` kiểm tra hệ thống.
