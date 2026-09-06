@@ -44,11 +44,12 @@
   --border-focus: #3b82f6;
 
   /* Executive Typography Hierarchy */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-dim: #475569;
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
   --text-inverse: #0c0e14;
+
 
   /* Primary Brand: Deep Sapphire / Sovereign Blue */
   --primary: #2563eb;
@@ -395,15 +396,17 @@ code, pre, .font-mono {
 }
 
 .button-secondary {
-  color: var(--text-primary) !important;
-  background: var(--bg-card);
-  border: 1px solid var(--border-medium);
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
 }
 
 .button-secondary:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.42) !important;
+  color: #ffffff !important;
 }
+
 
 .button-brass {
   color: #ffffff !important;

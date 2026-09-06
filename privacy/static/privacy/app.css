@@ -29,7 +29,8 @@
 .section-grid {
   display: grid;
   gap: 1.5rem;
-  margin-top: 2rem;
+  margin-top: 0;
+  margin-bottom: 3.5rem;
 }
 
 .three-up {
@@ -49,6 +50,7 @@
   gap: 2.5rem;
   align-items: center;
   padding: 3.5rem;
+  margin-bottom: 2.75rem;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-xl);
@@ -56,6 +58,7 @@
   position: relative;
   overflow: hidden;
 }
+
 
 .hero::before {
   content: "";
@@ -84,14 +87,18 @@
 }
 
 .hero h1 {
-  font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 3.8vw, 3.2rem);
-  font-weight: 600;
-  line-height: 1.18;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  margin-bottom: 0.85rem;
+  font-family: var(--font-sans);
+  font-size: clamp(2rem, 3.1vw, 2.75rem);
+  font-weight: 750;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  margin-bottom: 1.15rem;
 }
+
+
 
 .lead {
   font-size: 1.08rem;
@@ -174,16 +181,17 @@
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-  margin-top: 2rem;
+  gap: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 2.75rem;
 }
 
 .metric-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1.5rem 1.65rem;
-  min-height: 130px;
+  padding: 1.6rem 1.75rem;
+  min-height: 145px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
@@ -213,29 +221,34 @@
 .metric-card.accent-emerald::before { background: var(--status-success); }
 .metric-card.accent-amber::before { background: var(--status-warning); }
 .metric-card.accent-rose::before { background: var(--status-danger); }
+.metric-card.accent-sapphire::before { background: var(--primary); }
 
 .metric-card span {
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: block;
 }
 
 .metric-card strong {
   color: var(--text-primary);
-  font-size: 2.1rem;
+  font-size: 2.2rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  margin-top: 0.5rem;
+  margin: 0.6rem 0 0.4rem;
+  display: block;
 }
 
 .metric-card small {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
-  margin-top: 0.35rem;
+  display: block;
+  line-height: 1.4;
 }
+
 
 /* --------------------------------------------------------------------------
    4. Feature Cards (Three-Up Architectural Pillars)
