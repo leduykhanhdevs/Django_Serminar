@@ -22,7 +22,7 @@
 1. **Nhánh `main` được bảo vệ tuyệt đối:** Thành viên 2 (`Nguyễn Văn Hiếu`) không push trực tiếp vào `main`.
 2. **Nhánh phát triển cá nhân:** Thành viên 2 làm việc trên nhánh `nguyen-van-hieu` và đẩy code lên nhánh này.
 3. **Quyền Gộp Code (Merge):** **CHỈ CÓ NHÓM TRƯỞNG (Lê Duy Khánh) MỚI CÓ QUYỀN REVIEW VÀ MERGE VÀO `main`.**
-4. Chi tiết xem tại [CONTRIBUTING.md](CONTRIBUTING.md).
+4. Chi tiết xem tại [CONTRIBUTING.md](CONTRIBUTING.md) và [TEAM_RULES.md](TEAM_RULES.md).
 
 ---
 
