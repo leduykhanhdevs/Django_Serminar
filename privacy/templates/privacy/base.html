@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>{% if page_title %}{{ page_title }} · {% endif %}Privacy Compliance Hub</title>
+  <title>{% if page_title %}{{ page_title }} · {% endif %}DataShield - Privacy Compliance Hub</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'privacy/app.css' %}">
 </head>
 <body>
@@ -75,5 +75,6 @@
     <p><strong>Prototype học thuật chạy local.</strong> Nội dung chỉ hỗ trợ quản trị tuân thủ, không phải tư vấn pháp lý hay chứng nhận compliance.</p>
     <p>Không sử dụng CDN, analytics hoặc dữ liệu cá nhân thật trong bản demo.</p>
   </footer>
+  <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

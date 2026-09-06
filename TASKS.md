@@ -16,6 +16,15 @@
 
 ---
 
+
+> [!IMPORTANT]
+> ### 📐 NGUYÊN TẮC BẮT BUỘC VỀ CẤU TRÚC THEO 3 SLIDE BÀI GIẢNG (UIT)
+> Mọi thành viên và AI khi code phải tuân thủ nghiêm ngặt:
+> 1. **Static Files:** File tĩnh chung đặt tại `static/css/style.css`, `static/js/main.js`, `static/images/`. Cấu hình `STATICFILES_DIRS = [BASE_DIR / 'static']`.
+> 2. **Templates:** Template của app bắt buộc đặt trong `privacy/templates/privacy/*.html`. Template chung tại `templates/` (404, 500). Dùng `{% extends "privacy/base.html" %}`.
+> 3. **URL Reverse:** Dùng `{% url 'privacy:route' %}` và `redirect('privacy:route')`, không hard-code URL.
+> 4. **Model & Admin:** Mọi Model có `__str__`, `related_name` cho ForeignKey, và đăng ký `@admin.register` trong `admin.py`.
+
 ## 🗺️ RANH GIỚI PHẠM VI TRÁCH NHIỆM & TỆP TIN (FILE BOUNDARIES)
 
 Để tránh xung đột code giữa 2 thành viên, ranh giới file được phân chia rõ ràng như sau:

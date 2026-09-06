@@ -1,0 +1,13 @@
+/* DataShield - Global Stylesheet (Tuan thu Cau truc Static chuan Slide Buoi 2) */
+:root {
+  --primary-color: #1e3a8a;
+  --accent-color: #3b82f6;
+  --bg-color: #f8fafc;
+  --text-color: #0f172a;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}

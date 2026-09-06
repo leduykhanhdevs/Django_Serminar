@@ -35,6 +35,33 @@ Khi sử dụng bất kỳ công cụ AI nào (Antigravity, Cursor, Copilot, Cha
 
 ---
 
+
+## 📐 CHUẨN MỰC KIẾN TRÚC THEO BÀI GIẢNG (UIT SLIDES B1, B2, B3)
+
+Dự án tuân thủ nghiêm ngặt các quy chuẩn kỹ thuật do Giảng viên (NCS.ThS. Trần Phương Duy) hướng dẫn:
+1. **Cấu trúc Static Files chuẩn (Slide 29-31 Buổi 2):**
+   - Thư mục tĩnh dùng chung toàn project: `static/` gồm `css/style.css`, `js/main.js`, `images/`.
+   - Cấu hình trong `config/settings.py`:
+     ```python
+     STATIC_URL = "static/"
+     STATICFILES_DIRS = [BASE_DIR / "static"]
+     STATIC_ROOT = BASE_DIR / "staticfiles"
+     ```
+   - Sử dụng trong template: `{% load static %}` và `{% static 'css/style.css' %}`.
+2. **Cấu trúc thư mục & cấu hình Templates (Slide 18, 23-27 Buổi 2):**
+   - Namespacing cấp app: `privacy/templates/privacy/*.html` (ngăn xung đột khi `APP_DIRS: True`).
+   - Thư mục template dùng chung cấp project: `templates/` (chứa `404.html`, `500.html`).
+   - Cấu hình trong `config/settings.py`: `TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]`, `APP_DIRS = True`.
+   - Kế thừa giao diện chuẩn mực: `{% extends "privacy/base.html" %}` và `{% block content %}`.
+3. **Cấu trúc URL Routing & Reverse Resolution (Slide 8-9, 14-15 Buổi 2):**
+   - Khai báo `app_name = 'privacy'` trong `privacy/urls.py`.
+   - Định tuyến chuẩn: Dùng thẻ `{% url 'privacy:route_name' %}` trong template và `redirect('privacy:route_name')` trong view, tuyệt đối không hard-code URL string.
+4. **Cấu trúc Model, ORM, Admin & Migration (Slide 10-18, 30, 33, 40 Buổi 3):**
+   - Mọi Model đều có phương thức `__str__(self)` trả về chuỗi đại diện rõ ràng.
+   - Khóa ngoại `ForeignKey` bắt buộc có `on_delete` và `related_name`.
+   - Đăng ký toàn bộ Model vào Admin bằng `@admin.register` kèm cấu hình `list_display`, `list_filter`, `search_fields`.
+   - Quy trình đồng bộ CSDL chuẩn mực qua `makemigrations` và `migrate`.
+
 ## 🚀 HƯỚNG DẪN CHẠY DỰ ÁN
 
 ### 1. Chạy cục bộ (Local)

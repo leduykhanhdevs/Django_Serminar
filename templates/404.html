@@ -1,0 +1,10 @@
+{% extends "privacy/base.html" %}
+{% block content %}
+<div class="card" style="text-align: center; padding: 3rem 1rem;">
+  <h1>404 - Không tìm thấy trang</h1>
+  <p class="muted">Đường dẫn bạn yêu cầu không tồn tại hoặc đã bị thay đổi.</p>
+  <div style="margin-top: 1.5rem;">
+    <a href="{% url 'privacy:landing' %}" class="button">Về trang chủ</a>
+  </div>
+</div>
+{% endblock %}

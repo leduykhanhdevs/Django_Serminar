@@ -2,15 +2,30 @@
 
 You are assisting on "DataShield: Django Privacy & Compliance Platform".
 Topic: Personal Data Protection & Decree 13/2023 / GDPR Compliance in Django.
+Course: Django Cơ Bản (UIT) - Giảng viên: NCS.ThS. Trần Phương Duy.
 Team: 
 - Le Duy Khanh (Team Lead, Branch: main)
 - Nguyen Van Hieu (Member, Branch: nguyen-van-hieu)
 
-CRITICAL INSTRUCTIONS (ZERO TOLERANCE):
+MANDATORY RULES & SLIDE STANDARDS (ZERO TOLERANCE):
 1. MANDATORY: ALWAYS read `TASKS.md` first to check task assignments and file boundaries.
-2. ALWAYS read and inspect existing code in `privacy/models.py`, `privacy/services.py`, `privacy/views.py`, and `config/settings.py` before modifying or proposing code.
-3. DO NOT mix file modifications across member boundaries without explicit approval.
-4. NEVER bypass PostgreSQL Row-Level Security (RLS) or `TenantScopedModel`.
-5. NEVER allow mutation or deletion of `AuditEvent` (immutable SHA-256 hash ledger).
-6. Strictly follow Python 3.12+ type annotations and clean architecture.
-7. Ensure all existing tests pass via `pytest` before completing any task.
+2. SLIDE TEMPLATE STANDARD (Buổi 2 Slide 18):
+   - App templates MUST be in `privacy/templates/privacy/*.html` (namespaced).
+   - Project shared templates in `templates/` (404.html, 500.html).
+   - In `settings.py`: `TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates']`, `APP_DIRS = True`.
+   - Inheritance: `{% extends "privacy/base.html" %}`, `{% block content %}`.
+3. SLIDE STATIC STANDARD (Buổi 2 Slide 29-31):
+   - Shared static folder at root: `static/css/style.css`, `static/js/main.js`, `static/images/`.
+   - In `settings.py`: `STATIC_URL = 'static/'`, `STATICFILES_DIRS = [BASE_DIR / 'static']`, `STATIC_ROOT = BASE_DIR / 'staticfiles'`.
+   - In templates: `{% load static %}`, `{% static 'css/style.css' %}`. NEVER hardcode static paths.
+4. SLIDE URL & VIEW STANDARD (Buổi 2 Slide 8-9, 14-15):
+   - `app_name = 'privacy'` in `privacy/urls.py`.
+   - Use `{% url 'privacy:route_name' %}` in templates; `redirect('privacy:route_name')` in views.
+5. SLIDE MODEL & ADMIN STANDARD (Buổi 3 Slide 10-18, 40):
+   - Every Model must have `__str__(self)`.
+   - ForeignKeys must have `on_delete` and `related_name`.
+   - Register models in `admin.py` with `@admin.register` and `list_display`.
+6. SECURITY & AUDIT PRESERVATION:
+   - NEVER bypass PostgreSQL Row-Level Security (RLS) or `TenantScopedModel`.
+   - NEVER modify or delete `AuditEvent` (SHA-256 immutable hash chain).
+7. ALWAYS verify with `pytest` before finishing any task.
