@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+"""Django management entry point for the Privacy Compliance Hub."""
+
+import os
+import sys
+
+
+def main() -> None:
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:  # pragma: no cover - setup diagnostic
+        raise ImportError(
+            "Django is not available. Activate .venv and install requirements.txt."
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
+

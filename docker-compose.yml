@@ -1,0 +1,112 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_OWNER_USER:?set POSTGRES_OWNER_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_OWNER_PASSWORD:?set POSTGRES_OWNER_PASSWORD in .env}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:?set POSTGRES_APP_USER in .env}
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?set POSTGRES_APP_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init-roles.sh:/docker-entrypoint-initdb.d/01-roles.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "8025:8025"
+
+  migrate:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_OWNER_USER:?set POSTGRES_OWNER_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_OWNER_PASSWORD:?set POSTGRES_OWNER_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_DEBUG: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: migrate
+
+  web:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_APP_USER:?set POSTGRES_APP_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_APP_PASSWORD:?set POSTGRES_APP_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      REDIS_URL: redis://redis:6379/0
+      EMAIL_HOST: mailpit
+      EMAIL_PORT: 1025
+      DJANGO_DEBUG: "false"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    volumes:
+      - exports_data:/app/output
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz/', timeout=3).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  worker:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_APP_USER:?set POSTGRES_APP_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_APP_PASSWORD:?set POSTGRES_APP_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_DEBUG: "false"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: worker
+    volumes:
+      - exports_data:/app/output
+
+  beat:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_APP_USER:?set POSTGRES_APP_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_APP_PASSWORD:?set POSTGRES_APP_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_DEBUG: "false"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: beat
+
+volumes:
+  postgres_data:
+  redis_data:
+  exports_data:

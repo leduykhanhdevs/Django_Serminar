@@ -1,0 +1,22 @@
+{% extends "privacy/base.html" %}
+
+{% block content %}
+<section class="auth-layout">
+  <div class="content-card auth-card">
+    <p class="eyebrow">Tài khoản đặc quyền</p>
+    <h1>Thiết lập TOTP</h1>
+    <p>Thêm tài khoản này vào ứng dụng xác thực (Google Authenticator, Microsoft Authenticator, 1Password hoặc tương đương) bằng URI bên dưới. Không chụp màn hình hoặc chia sẻ URI này.</p>
+    <label for="totp-config">URI cấu hình một lần</label>
+    <textarea id="totp-config" class="code-field" rows="4" readonly>{{ config_url }}</textarea>
+    <p class="muted">Sau khi thêm vào ứng dụng, nhập mã hiện tại để kích hoạt. Prototype không gửi mã TOTP qua email và không dùng social login.</p>
+    <form method="post" class="stacked-form">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+      {% endfor %}
+      {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      <button class="button" type="submit">Kích hoạt TOTP</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

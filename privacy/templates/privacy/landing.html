@@ -1,0 +1,51 @@
+{% extends "privacy/base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Privacy by Design · Django · Multi-tenant</p>
+    <h1>Quản trị quyền dữ liệu cá nhân, rõ ràng theo từng tổ chức.</h1>
+    <p class="lead">Privacy Compliance Hub là prototype học thuật giúp mô phỏng consent, yêu cầu của chủ thể dữ liệu, hồ sơ tác động, vendor và sự cố trong một ứng dụng Django server-rendered.</p>
+    <div class="button-row">
+      {% if request.user.is_authenticated %}
+        <a class="button" href="{% url 'privacy:dashboard' %}">Mở bảng điều khiển</a>
+      {% else %}
+        <a class="button" href="{% url 'privacy:login' %}">Đăng nhập demo</a>
+      {% endif %}
+      <a class="button button-secondary" href="{% url 'privacy:legal_crosswalk' %}">Xem đối chiếu pháp lý</a>
+    </div>
+  </div>
+  <aside class="hero-panel" aria-label="Cam kết thiết kế">
+    <h2>Nguyên tắc thiết kế</h2>
+    <ul class="check-list">
+      <li>Consent riêng cho từng mục đích, không checkbox mặc định.</li>
+      <li>Tách dữ liệu theo tenant và theo vai trò.</li>
+      <li>Luồng phê duyệt cho export, xóa, chuyển dữ liệu và sự cố.</li>
+      <li>Quy tắc thời hạn có phiên bản, không hard-code NĐ 13 cũ.</li>
+    </ul>
+  </aside>
+</section>
+
+<section class="section-grid three-up" aria-label="Các khu vực chức năng">
+  <article class="feature-card">
+    <span class="feature-number">01</span>
+    <h2>Trung tâm đồng ý</h2>
+    <p>Trình bày notice, lựa chọn mục đích và ghi nhận bằng chứng đồng ý/rút lại theo từng tenant.</p>
+  </article>
+  <article class="feature-card">
+    <span class="feature-number">02</span>
+    <h2>Quyền dữ liệu</h2>
+    <p>Tạo, theo dõi và xử lý các yêu cầu xem, sửa, cung cấp, xóa, hạn chế hoặc phản đối.</p>
+  </article>
+  <article class="feature-card">
+    <span class="feature-number">03</span>
+    <h2>Không gian tuân thủ</h2>
+    <p>Theo dõi hoạt động xử lý, vendor/cloud, hồ sơ tác động, chuyển dữ liệu và incident.</p>
+  </article>
+</section>
+
+<section class="notice-panel">
+  <h2>Phạm vi pháp lý trong demo</h2>
+  <p>Khung Việt Nam hiện hành được đặt ở Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định 356/2025/NĐ-CP. Nghị định 13/2023/NĐ-CP chỉ được hiển thị ở chế độ đối chiếu lịch sử. GDPR chỉ được đánh giá khi có điều kiện áp dụng thực tế.</p>
+</section>
+{% endblock %}

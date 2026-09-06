@@ -1,0 +1,13 @@
+# DataShield Project Rules for Cursor / AI Assistants
+
+You are assisting on "DataShield: Django Privacy & Compliance Platform".
+Topic: Personal Data Protection & Decree 13/2023 / GDPR Compliance in Django.
+Team: Le Duy Khanh (Team Lead), Nguyen Van Hieu (Member).
+
+CRITICAL INSTRUCTIONS:
+1. ALWAYS read and inspect existing code in `privacy/models.py`, `privacy/services.py`, `privacy/views.py`, and `config/settings.py` before modifying or proposing code.
+2. NEVER bypass PostgreSQL Row-Level Security (RLS) or `TenantScopedModel`.
+3. NEVER allow mutation or deletion of `AuditEvent` (it is an immutable SHA-256 hash ledger).
+4. Strictly follow Python 3.12+ type annotations and clean architecture.
+5. All sensitive data must adhere to Decree 13/2023/ND-CP and GDPR privacy requirements.
+6. Ensure existing tests pass via `pytest`.

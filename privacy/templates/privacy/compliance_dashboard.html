@@ -1,0 +1,49 @@
+{% extends "privacy/base.html" %}
+
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">{{ organization.name }} · Vai trò tuân thủ</p><h1>Không gian tuân thủ</h1><p>Quản trị theo tenant cho hoạt động xử lý, chuỗi vendor, hồ sơ tác động và incident.</p></div>
+  <a class="button button-secondary" href="{% url 'privacy:legal_crosswalk' %}">Đối chiếu pháp lý</a>
+</div>
+
+<section class="metric-grid" aria-label="Chỉ số tuân thủ">
+  <article class="metric-card"><span>Hoạt động xử lý</span><strong>{{ activity_count }}</strong></article>
+  <article class="metric-card"><span>Vendor</span><strong>{{ vendor_count }}</strong></article>
+  <article class="metric-card"><span>Chuyển dữ liệu</span><strong>{{ transfer_count }}</strong></article>
+  <article class="metric-card"><span>Hồ sơ tác động</span><strong>{{ dossier_count }}</strong></article>
+  <article class="metric-card"><span>Sự cố</span><strong>{{ incident_count }}</strong></article>
+  <article class="metric-card"><span>Audit chain</span><strong>{% if audit_status is True %}Đạt{% elif audit_status is False %}Cần kiểm tra{% else %}Chưa chạy{% endif %}</strong></article>
+</section>
+
+<section class="section-grid two-up">
+  <article class="content-card">
+    <div class="card-heading"><h2>Hoạt động xử lý</h2><span class="muted">Processing register</span></div>
+    {% if activities %}<ul class="record-list">{% for item in activities %}<li><div><strong>{{ item.name }}</strong><span>{{ item.get_legal_role_display|default:item.legal_role }}</span></div><span class="status status-{{ item.status|default:'unknown' }}">{{ item.get_status_display|default:item.status|default:"—" }}</span></li>{% endfor %}</ul>{% else %}<p class="empty-state">Chưa có hoạt động xử lý nào được ghi nhận.</p>{% endif %}
+  </article>
+  <article class="content-card">
+    <div class="card-heading"><h2>Vendor và cloud</h2><span class="muted">DPA & subprocessor</span></div>
+    {% if vendors %}<ul class="record-list">{% for vendor in vendors %}<li><div><strong>{{ vendor.name }}</strong><span>{{ vendor.country|default:"Chưa khai báo quốc gia" }}</span></div>{% if vendor.dpa_in_place %}<span class="status status-approved">DPA có</span>{% else %}<span class="status status-warning">Cần DPA</span>{% endif %}</li>{% endfor %}</ul>{% else %}<p class="empty-state">Chưa có vendor nào trong register.</p>{% endif %}
+  </article>
+  <article class="content-card">
+    <div class="card-heading"><h2>Chuyển dữ liệu xuyên biên giới</h2><span class="draft-badge">Prepare for filing</span></div>
+    {% if transfers %}<ul class="record-list">{% for transfer in transfers %}<li><div><strong>{{ transfer.vendor.name|default:transfer.vendor }}</strong><span>{{ transfer.destination_country }}</span></div><span class="status status-{{ transfer.status|default:'unknown' }}">{{ transfer.get_status_display|default:transfer.status|default:"—" }}</span></li>{% endfor %}</ul>{% else %}<p class="empty-state">Không có transfer nào được ghi nhận.</p>{% endif %}
+  </article>
+  <article class="content-card">
+    <div class="card-heading"><h2>Hồ sơ tác động</h2><span class="muted">DPIA / dossier</span></div>
+    {% if dossiers %}<ul class="record-list">{% for dossier in dossiers %}<li><strong>{{ dossier.title }}</strong><span class="status status-{{ dossier.status|default:'unknown' }}">{{ dossier.get_status_display|default:dossier.status|default:"—" }}</span></li>{% endfor %}</ul>{% else %}<p class="empty-state">Chưa có hồ sơ tác động nào.</p>{% endif %}
+  </article>
+</section>
+
+<section class="content-card">
+  <div class="card-heading"><h2>Sự cố dữ liệu cá nhân</h2><span class="muted">Các quyết định thông báo cần phê duyệt có thẩm quyền.</span></div>
+  {% if incidents %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Sự cố</th><th>Mức độ</th><th>Phát hiện</th><th>Hạn thông báo</th><th>Trạng thái</th>{% if can_approve %}<th></th>{% endif %}</tr></thead>
+      <tbody>{% for incident in incidents %}<tr>
+        <td><strong>{{ incident.title }}</strong></td><td>{{ incident.get_severity_display|default:incident.severity }}</td><td>{{ incident.detected_at|date:"d/m/Y H:i" }}</td><td>{{ incident.notification_due_at|date:"d/m/Y H:i" }}</td><td><span class="status status-{{ incident.status|default:'unknown' }}">{{ incident.get_status_display|default:incident.status|default:"—" }}</span></td>
+        {% if can_approve %}<td><form class="inline-form" method="post" action="{% url 'privacy:approve_incident' incident.pk %}">{% csrf_token %}<label class="sr-only" for="approve-incident-{{ incident.pk }}">Xác nhận rà soát</label><input id="approve-incident-{{ incident.pk }}" name="confirmed" type="checkbox" required><button class="button button-small" type="submit">Phê duyệt</button></form></td>{% endif %}
+      </tr>{% endfor %}</tbody>
+    </table></div>
+  {% else %}<p class="empty-state">Chưa có incident nào trong tenant này.</p>{% endif %}
+</section>
+{% endblock %}

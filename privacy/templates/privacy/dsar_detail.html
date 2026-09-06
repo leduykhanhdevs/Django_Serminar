@@ -1,0 +1,67 @@
+{% extends "privacy/base.html" %}
+
+{% block content %}
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">{{ organization.name }} · {{ case.reference }}</p>
+    <h1>{{ case.get_request_type_display|default:case.request_type }}</h1>
+    <p>Hồ sơ chỉ hiển thị trong tenant hiện hoạt và theo quyền đã cấp.</p>
+  </div>
+  <a class="button button-secondary" href="{% url 'privacy:dsar_list' %}">← Danh sách yêu cầu</a>
+</div>
+
+<section class="section-grid two-up">
+  <article class="content-card">
+    <h2>Thông tin xử lý</h2>
+    <dl class="detail-list">
+      <dt>Mã tham chiếu</dt><dd>{{ case.reference }}</dd>
+      <dt>Trạng thái</dt><dd><span class="status status-{{ case.status|default:'unknown' }}">{{ case.get_status_display|default:case.status|default:"Chưa xác định" }}</span></dd>
+      <dt>Gửi lúc</dt><dd>{{ case.submitted_at|date:"d/m/Y H:i" }}</dd>
+      <dt>Hạn xử lý</dt><dd>{% if case.due_at %}{{ case.due_at|date:"d/m/Y H:i" }}{% else %}Đang xác định theo rule catalog{% endif %}</dd>
+      {% if can_manage_compliance %}<dt>Chủ thể</dt><dd>{{ case.subject_email }}</dd>{% endif %}
+      {% if case.extension_reason %}<dt>Lý do gia hạn</dt><dd>{{ case.extension_reason }}</dd>{% endif %}
+      <dt>Cần Privacy Officer</dt><dd>{% if case.requires_officer_approval %}Có{% else %}Không{% endif %}</dd>
+    </dl>
+  </article>
+  <aside class="content-card info-card">
+    <h2>Kiểm soát an toàn</h2>
+    <p>Yêu cầu xóa, cung cấp dữ liệu hoặc trường hợp có legal hold không được thực thi tự động chỉ từ ticket này.</p>
+    {% if can_approve %}
+      <form method="post" action="{% url 'privacy:approve_case' case.reference %}" class="stacked-form approval-form">
+        {% csrf_token %}
+        <label for="{{ approval_form.confirmed.id_for_label }}">{{ approval_form.confirmed }} <span>{{ approval_form.confirmed.label }}</span></label>
+        <button class="button" type="submit">Phê duyệt hồ sơ</button>
+      </form>
+    {% elif case.requires_officer_approval %}
+      <p class="muted">Hồ sơ cần Privacy Officer phê duyệt trước bước xuất/xóa.</p>
+    {% endif %}
+  </aside>
+</section>
+
+<section class="content-card">
+  <div class="card-heading"><h2>Bản xuất dữ liệu</h2><span class="draft-badge">Bản nháp học tập</span></div>
+  <p class="muted">Tệp chỉ được tải sau khi xác thực lại mật khẩu và trước khi liên kết hết hạn.</p>
+  {% if can_request_export %}
+    <div class="button-row">
+      <form class="inline-form" method="post" action="{% url 'privacy:request_export' case.reference 'docx' %}">{% csrf_token %}<button class="button button-secondary" type="submit">Yêu cầu DOCX</button></form>
+      <form class="inline-form" method="post" action="{% url 'privacy:request_export' case.reference 'pdf' %}">{% csrf_token %}<button class="button button-secondary" type="submit">Yêu cầu PDF</button></form>
+    </div>
+  {% endif %}
+  {% if artifacts %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Tệp</th><th>Trạng thái</th><th>Hết hạn</th><th></th></tr></thead>
+      <tbody>{% for artifact in artifacts %}
+        <tr><td>{{ artifact.file_name }}</td><td><span class="status status-{{ artifact.status }}">{{ artifact.get_status_display|default:artifact.status }}</span></td><td>{{ artifact.expires_at|date:"d/m/Y H:i" }}</td><td>
+          {% if artifact.status == 'ready' %}
+            <a class="button button-small" href="{% url 'privacy:export_download' artifact.download_token %}">Xác thực và tải</a>
+          {% elif artifact.status == 'pending_approval' and can_approve_export %}
+            <form class="inline-form" method="post" action="{% url 'privacy:approve_export' artifact.download_token %}">{% csrf_token %}<label class="sr-only" for="confirm-export-{{ artifact.pk }}">Xác nhận rà soát</label><input id="confirm-export-{{ artifact.pk }}" name="confirmed" type="checkbox" value="1" required><button class="button button-small" type="submit">Phê duyệt & tạo</button></form>
+          {% else %}—{% endif %}
+        </td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+  {% else %}
+    <p class="empty-state">Chưa có bản xuất được tạo cho hồ sơ này.</p>
+  {% endif %}
+</section>
+{% endblock %}

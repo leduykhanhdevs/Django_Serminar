@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+.env
+.git/
+.pytest_cache/
+htmlcov/
+staticfiles/
+media/
+output/
+13_2023_ND-CP_465185.doc
+

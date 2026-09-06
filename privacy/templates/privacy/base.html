@@ -1,0 +1,79 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{% if page_title %}{{ page_title }} · {% endif %}Privacy Compliance Hub</title>
+  <link rel="stylesheet" href="{% static 'privacy/app.css' %}">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="{% url 'privacy:landing' %}" aria-label="Trang chủ Privacy Compliance Hub">
+        <span class="brand-mark" aria-hidden="true">◈</span>
+        <span>Privacy Compliance Hub</span>
+      </a>
+      <nav class="primary-nav" aria-label="Điều hướng chính">
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'privacy:dashboard' %}">Tổng quan</a>
+          <a href="{% url 'privacy:consent_center' %}">Đồng ý</a>
+          <a href="{% url 'privacy:dsar_list' %}">Quyền dữ liệu</a>
+          {% if can_manage_compliance and totp_verified %}
+            <a href="{% url 'privacy:compliance_dashboard' %}">Tuân thủ</a>
+          {% endif %}
+          <a href="{% url 'privacy:legal_crosswalk' %}">Đối chiếu pháp lý</a>
+        {% else %}
+          <a href="{% url 'privacy:legal_crosswalk' %}">Khung pháp lý</a>
+        {% endif %}
+      </nav>
+      <div class="account-area">
+        {% if request.user.is_authenticated %}
+          {% if available_organizations %}
+            <form class="tenant-switcher" action="{% url 'privacy:switch_organization' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <label class="sr-only" for="active-organization">Tổ chức đang hoạt động</label>
+              <select id="active-organization" name="organization_id">
+                {% for membership in available_organizations %}
+                  <option value="{{ membership.organization_id }}" {% if active_organization and membership.organization_id == active_organization.pk %}selected{% endif %}>{{ membership.organization.name }}</option>
+                {% endfor %}
+              </select>
+              <button class="button button-small button-secondary" type="submit">Chuyển</button>
+            </form>
+          {% endif %}
+          {% if totp_required %}
+            <a class="button button-small button-secondary" href="{% if totp_verified %}{% url 'privacy:totp_verify' %}{% else %}{% url 'privacy:totp_setup' %}{% endif %}">{% if totp_verified %}TOTP đã bật{% else %}Thiết lập TOTP{% endif %}</a>
+          {% endif %}
+          <span class="account-name">{{ request.user.get_username }}</span>
+          <form class="inline-form" action="{% url 'privacy:logout' %}" method="post">
+            {% csrf_token %}
+            <button class="button button-quiet" type="submit">Đăng xuất</button>
+          </form>
+        {% else %}
+          <a class="button button-small" href="{% url 'privacy:login' %}">Đăng nhập</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="flash-region" aria-live="polite">
+      {% for message in messages %}
+        <div class="flash flash-{{ message.tags|default:'info' }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main id="main-content" class="site-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Prototype học thuật chạy local.</strong> Nội dung chỉ hỗ trợ quản trị tuân thủ, không phải tư vấn pháp lý hay chứng nhận compliance.</p>
+    <p>Không sử dụng CDN, analytics hoặc dữ liệu cá nhân thật trong bản demo.</p>
+  </footer>
+</body>
+</html>

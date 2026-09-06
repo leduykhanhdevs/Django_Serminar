@@ -1,0 +1,79 @@
+{% extends "privacy/base.html" %}
+
+{% block content %}
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">{{ organization.name }}</p>
+    <h1>Trung tâm đồng ý</h1>
+    <p>Mỗi mục đích xử lý cần một lựa chọn rõ ràng. Không có lựa chọn nào được bật sẵn.</p>
+  </div>
+</div>
+
+<section class="section-grid two-up consent-layout">
+  <article class="content-card">
+    <h2>Ghi nhận sự đồng ý</h2>
+    {% if notice %}
+      <div class="notice-copy">
+        <p class="small-label">Thông báo đang hiệu lực{% if notice.version %} · Phiên bản {{ notice.version }}{% endif %}</p>
+        <h3>{{ notice.title }}</h3>
+        {% if notice.effective_at %}<p class="muted">Hiệu lực: {{ notice.effective_at|date:"d/m/Y H:i" }}</p>{% endif %}
+        <div class="notice-body">{{ notice.body|linebreaksbr }}</div>
+      </div>
+      <form method="post" class="stacked-form consent-form" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+          <div class="form-field {% if field.name == 'notice_acknowledged' %}notice-acknowledgement{% else %}purpose-choice{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field }} <span>{{ field.label }}</span></label>
+            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+            {% if field.errors %}<div class="field-error">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button class="button" type="submit">Ghi nhận lựa chọn của tôi</button>
+      </form>
+    {% else %}
+      <p class="empty-state">Chưa có thông báo đã công bố. Vì vậy không thể thu thập consent.</p>
+    {% endif %}
+  </article>
+  <aside class="content-card info-card">
+    <h2>Quyền kiểm soát của bạn</h2>
+    <ul class="check-list">
+      <li>Bạn có thể chỉ chọn các mục đích thật sự cần thiết.</li>
+      <li>Im lặng hoặc bỏ trống không được hiểu là đồng ý.</li>
+      <li>Rút lại consent được ghi nhận thành sự kiện mới để giữ bằng chứng.</li>
+      <li>Yêu cầu khác có thể gửi ở khu vực Quyền dữ liệu.</li>
+    </ul>
+    <a class="button button-secondary" href="{% url 'privacy:dsar_create' %}">Tạo yêu cầu quyền dữ liệu</a>
+  </aside>
+</section>
+
+<section class="content-card">
+  <div class="card-heading"><h2>Nhật ký consent của tôi</h2><span class="muted">Theo tenant {{ organization.name }}</span></div>
+  {% if consent_events %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mục đích</th><th>Thông báo</th><th>Thời điểm</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody>
+          {% for event in consent_events %}
+            <tr>
+              <td>{{ event.purpose.name|default:event.purpose }}</td>
+              <td>{{ event.notice_version.title|default:event.notice_version }}{% if event.notice_version.version %} · v{{ event.notice_version.version }}{% endif %}</td>
+              <td>{{ event.occurred_at|date:"d/m/Y H:i" }}</td>
+              <td><span class="status status-{{ event.status }}">{{ event.get_status_display|default:event.status }}</span></td>
+              <td>
+                {% if event.can_withdraw %}
+                  <form class="inline-form" action="{% url 'privacy:withdraw_consent' event.pk %}" method="post">
+                    {% csrf_token %}<button class="button button-danger button-small" type="submit">Rút lại</button>
+                  </form>
+                {% else %}—{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="empty-state">Chưa có sự kiện consent nào cho tài khoản này tại tenant đang hoạt động.</p>
+  {% endif %}
+</section>
+{% endblock %}
