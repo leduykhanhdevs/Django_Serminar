@@ -6,6 +6,17 @@
 
 ---
 
+### NGUYÊN TẮC 0: ĐỌC KỸ FILE TASKS.MD VÀ XÁC ĐỊNH RANH GIỚI TRÁCH NHIỆM
+1. **BẮT BUỘC ĐỌC `TASKS.md`:** Trước khi thực hiện bất kỳ chỉ thị code nào, AI **PHẢI ĐỌC KỸ FILE `TASKS.md`** để biết rõ:
+   - Ai là người đang yêu cầu (Lê Duy Khánh hay Nguyễn Văn Hiếu)?
+   - Task đó thuộc trách nhiệm của ai và tác động đến những tệp tin nào?
+2. **Tuân thủ Ranh giới Tệp tin (File Boundaries):**
+   - **Nhánh `main` (Lê Duy Khánh):** `privacy/models.py`, `privacy/services.py`, `privacy/tenant_context.py`, `privacy/middleware.py`, `postgres/`, `docker/`, `config/settings.py`.
+   - **Nhánh `nguyen-van-hieu` (Nguyễn Văn Hiếu):** `privacy/views.py`, `privacy/forms.py`, `privacy/templates/`, `privacy/exports.py`, `privacy/tasks.py`.
+   - **KHÔNG SỬA LẪN LỘN:** Tránh tuyệt đối việc sửa chéo file gây ra xung đột Git (Merge Conflicts) giữa hai thành viên.
+
+---
+
 ### NGUYÊN TẮC 1: ĐỌC LẠI VÀ GHI NHỚ TOÀN BỘ SOURCE CODE CŨ TRƯỚC KHI VIẾT MỚI
 1. **Không suy đoán / Không hallucinate:** Trước khi tạo file mới hoặc chỉnh sửa bất kỳ module nào, AI **PHẢI** đọc lại toàn bộ mã nguồn của các file liên quan (đặc biệt là `privacy/models.py`, `privacy/services.py`, `privacy/tenant_context.py`, `config/settings.py`).
 2. **Nắm chắc Dependency Graph:** Phải hiểu rõ luồng dữ liệu giữa Models -> Services -> Views -> Forms -> Celery Tasks trước khi can thiệp.

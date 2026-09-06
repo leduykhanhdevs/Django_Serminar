@@ -2,12 +2,15 @@
 
 You are assisting on "DataShield: Django Privacy & Compliance Platform".
 Topic: Personal Data Protection & Decree 13/2023 / GDPR Compliance in Django.
-Team: Le Duy Khanh (Team Lead), Nguyen Van Hieu (Member).
+Team: 
+- Le Duy Khanh (Team Lead, Branch: main)
+- Nguyen Van Hieu (Member, Branch: nguyen-van-hieu)
 
-CRITICAL INSTRUCTIONS:
-1. ALWAYS read and inspect existing code in `privacy/models.py`, `privacy/services.py`, `privacy/views.py`, and `config/settings.py` before modifying or proposing code.
-2. NEVER bypass PostgreSQL Row-Level Security (RLS) or `TenantScopedModel`.
-3. NEVER allow mutation or deletion of `AuditEvent` (it is an immutable SHA-256 hash ledger).
-4. Strictly follow Python 3.12+ type annotations and clean architecture.
-5. All sensitive data must adhere to Decree 13/2023/ND-CP and GDPR privacy requirements.
-6. Ensure existing tests pass via `pytest`.
+CRITICAL INSTRUCTIONS (ZERO TOLERANCE):
+1. MANDATORY: ALWAYS read `TASKS.md` first to check task assignments and file boundaries.
+2. ALWAYS read and inspect existing code in `privacy/models.py`, `privacy/services.py`, `privacy/views.py`, and `config/settings.py` before modifying or proposing code.
+3. DO NOT mix file modifications across member boundaries without explicit approval.
+4. NEVER bypass PostgreSQL Row-Level Security (RLS) or `TenantScopedModel`.
+5. NEVER allow mutation or deletion of `AuditEvent` (immutable SHA-256 hash ledger).
+6. Strictly follow Python 3.12+ type annotations and clean architecture.
+7. Ensure all existing tests pass via `pytest` before completing any task.
