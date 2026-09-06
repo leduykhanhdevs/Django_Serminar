@@ -2,17 +2,25 @@
 
 {% block content %}
 <section class="auth-layout">
-  <div class="content-card auth-card">
-    <p class="eyebrow">Xác thực bổ sung</p>
+  <div class="auth-card">
+    <div class="eyebrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Xác thực bổ sung</span>
+    </div>
     <h1>Nhập mã TOTP</h1>
     <p>Vai trò đặc quyền cần phiên xác thực TOTP trước khi xem không gian tuân thủ hoặc phê duyệt export, chuyển dữ liệu và sự cố.</p>
     <form method="post" class="stacked-form">
       {% csrf_token %}
       {% for field in form %}
-        <div class="form-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+        <div class="form-field">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+          {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
       {% endfor %}
       {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
-      <button class="button" type="submit">Xác thực</button>
+      <button class="button button-block" type="submit">Xác thực</button>
     </form>
   </div>
 </section>

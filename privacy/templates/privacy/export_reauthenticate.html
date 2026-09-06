@@ -2,12 +2,24 @@
 
 {% block content %}
 <div class="narrow-page">
-  <div class="page-heading"><div><p class="eyebrow">Bảo vệ bản xuất</p><h1>Xác thực lại trước khi tải</h1><p>Tệp <strong>{{ artifact.file_name }}</strong> chỉ sẵn sàng trong một khoảng thời gian ngắn và có watermark “Bản nháp học tập”.</p></div></div>
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Bảo vệ bản xuất</p>
+      <h1>Xác thực lại trước khi tải</h1>
+      <p>Tệp <strong class="font-mono">{{ artifact.file_name }}</strong> chỉ sẵn sàng trong một khoảng thời gian ngắn và có watermark “Bản nháp học tập”.</p>
+    </div>
+  </div>
   <section class="content-card">
     <form method="post" class="stacked-form">
       {% csrf_token %}
-      <div class="form-field"><label for="password">Nhập lại mật khẩu</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
-      <div class="button-row"><button class="button" type="submit">Xác thực và tiếp tục</button><a class="button button-secondary" href="{% url 'privacy:dsar_detail' artifact.case.reference %}">Hủy</a></div>
+      <div class="form-field">
+        <label for="password">Nhập lại mật khẩu</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="button-row">
+        <button class="button" type="submit">Xác thực và tiếp tục</button>
+        <a class="button button-secondary" href="{% url 'privacy:dsar_detail' artifact.case.reference %}">Hủy</a>
+      </div>
     </form>
   </section>
 </div>

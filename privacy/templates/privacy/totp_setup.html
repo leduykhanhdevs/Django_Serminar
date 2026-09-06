@@ -2,20 +2,28 @@
 
 {% block content %}
 <section class="auth-layout">
-  <div class="content-card auth-card">
-    <p class="eyebrow">Tài khoản đặc quyền</p>
+  <div class="auth-card" style="width: min(520px, 100%);">
+    <div class="eyebrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Tài khoản đặc quyền</span>
+    </div>
     <h1>Thiết lập TOTP</h1>
-    <p>Thêm tài khoản này vào ứng dụng xác thực (Google Authenticator, Microsoft Authenticator, 1Password hoặc tương đương) bằng URI bên dưới. Không chụp màn hình hoặc chia sẻ URI này.</p>
-    <label for="totp-config">URI cấu hình một lần</label>
-    <textarea id="totp-config" class="code-field" rows="4" readonly>{{ config_url }}</textarea>
-    <p class="muted">Sau khi thêm vào ứng dụng, nhập mã hiện tại để kích hoạt. Prototype không gửi mã TOTP qua email và không dùng social login.</p>
+    <p>Thêm tài khoản này vào ứng dụng xác thực (Google Authenticator, Microsoft Authenticator hoặc tương đương) bằng URI bên dưới. Không chụp màn hình hoặc chia sẻ URI này.</p>
+    <label for="totp-config" style="font-weight: 600; font-size: 0.88rem; color: var(--text-primary);">URI cấu hình một lần</label>
+    <textarea id="totp-config" class="code-field" rows="3" readonly>{{ config_url }}</textarea>
+    <p class="muted" style="margin-bottom: 1.25rem;">Sau khi thêm vào ứng dụng, nhập mã hiện tại để kích hoạt. Prototype không gửi mã TOTP qua email và không dùng social login.</p>
     <form method="post" class="stacked-form">
       {% csrf_token %}
       {% for field in form %}
-        <div class="form-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+        <div class="form-field">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+          {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
       {% endfor %}
       {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
-      <button class="button" type="submit">Kích hoạt TOTP</button>
+      <button class="button button-block" type="submit">Kích hoạt TOTP</button>
     </form>
   </div>
 </section>

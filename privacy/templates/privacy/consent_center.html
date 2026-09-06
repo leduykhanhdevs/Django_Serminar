@@ -35,6 +35,7 @@
       <p class="empty-state">Chưa có thông báo đã công bố. Vì vậy không thể thu thập consent.</p>
     {% endif %}
   </article>
+
   <aside class="content-card info-card">
     <h2>Quyền kiểm soát của bạn</h2>
     <ul class="check-list">
@@ -43,29 +44,48 @@
       <li>Rút lại consent được ghi nhận thành sự kiện mới để giữ bằng chứng.</li>
       <li>Yêu cầu khác có thể gửi ở khu vực Quyền dữ liệu.</li>
     </ul>
-    <a class="button button-secondary" href="{% url 'privacy:dsar_create' %}">Tạo yêu cầu quyền dữ liệu</a>
+    <div style="margin-top: 1.5rem;">
+      <a class="button button-secondary" href="{% url 'privacy:dsar_create' %}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Tạo yêu cầu quyền dữ liệu</span>
+      </a>
+    </div>
   </aside>
 </section>
 
 <section class="content-card">
-  <div class="card-heading"><h2>Nhật ký consent của tôi</h2><span class="muted">Theo tenant {{ organization.name }}</span></div>
+  <div class="card-heading">
+    <h2>Nhật ký consent của tôi</h2>
+    <span class="muted">Theo tenant {{ organization.name }}</span>
+  </div>
   {% if consent_events %}
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Mục đích</th><th>Thông báo</th><th>Thời điểm</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Mục đích</th>
+            <th>Thông báo</th>
+            <th>Thời điểm</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
         <tbody>
           {% for event in consent_events %}
             <tr>
-              <td>{{ event.purpose.name|default:event.purpose }}</td>
+              <td><strong>{{ event.purpose.name|default:event.purpose }}</strong></td>
               <td>{{ event.notice_version.title|default:event.notice_version }}{% if event.notice_version.version %} · v{{ event.notice_version.version }}{% endif %}</td>
-              <td>{{ event.occurred_at|date:"d/m/Y H:i" }}</td>
+              <td>{{ event.created_at|date:"d/m/Y H:i" }}</td>
               <td><span class="status status-{{ event.status }}">{{ event.get_status_display|default:event.status }}</span></td>
               <td>
-                {% if event.can_withdraw %}
-                  <form class="inline-form" action="{% url 'privacy:withdraw_consent' event.pk %}" method="post">
-                    {% csrf_token %}<button class="button button-danger button-small" type="submit">Rút lại</button>
+                {% if event.status == 'granted' %}
+                  <form method="post" action="{% url 'privacy:withdraw_consent' event.pk %}">
+                    {% csrf_token %}
+                    <button class="button button-small button-danger" type="submit">Rút đồng ý</button>
                   </form>
-                {% else %}—{% endif %}
+                {% else %}
+                  <span class="muted">—</span>
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
@@ -73,7 +93,7 @@
       </table>
     </div>
   {% else %}
-    <p class="empty-state">Chưa có sự kiện consent nào cho tài khoản này tại tenant đang hoạt động.</p>
+    <p class="empty-state">Chưa có sự kiện đồng ý nào được ghi nhận cho tài khoản của bạn.</p>
   {% endif %}
 </section>
 {% endblock %}

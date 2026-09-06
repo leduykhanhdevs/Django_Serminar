@@ -1,10 +1,12 @@
 {% extends "privacy/base.html" %}
+
 {% block content %}
-<div class="card" style="text-align: center; padding: 3rem 1rem;">
-  <h1>500 - Lỗi máy chủ nội bộ</h1>
-  <p class="muted">Đã xảy ra lỗi trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.</p>
-  <div style="margin-top: 1.5rem;">
-    <a href="{% url 'privacy:landing' %}" class="button">Về trang chủ</a>
+<div class="card" style="max-width: 580px; margin: 4rem auto; text-align: center; padding: 3.5rem 2rem;">
+  <div class="eyebrow" style="margin-bottom: 1.25rem;">Sự cố hệ thống</div>
+  <h1 style="font-size: 2.2rem; margin-bottom: 0.75rem;">500 — Lỗi máy chủ nội bộ</h1>
+  <p class="muted" style="margin-bottom: 2rem;">Đã xảy ra sự cố trong quá trình xử lý yêu cầu. Sự kiện này đã được ghi nhận vào nhật ký kiểm toán hệ thống.</p>
+  <div>
+    <a href="{% url 'privacy:landing' %}" class="button">Về trang chủ DataShield</a>
   </div>
 </div>
 {% endblock %}

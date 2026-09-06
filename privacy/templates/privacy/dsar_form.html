@@ -3,21 +3,35 @@
 {% block content %}
 <div class="narrow-page">
   <div class="page-heading">
-    <div><p class="eyebrow">{{ organization.name }}</p><h1>Tạo yêu cầu quyền dữ liệu</h1><p>Hồ sơ sẽ được theo dõi theo quy tắc pháp lý có phiên bản. Hệ thống không tự động xóa dữ liệu.</p></div>
+    <div>
+      <p class="eyebrow">{{ organization.name }}</p>
+      <h1>Tạo yêu cầu quyền dữ liệu</h1>
+      <p>Hồ sơ sẽ được theo dõi theo quy tắc pháp lý có phiên bản. Hệ thống không tự động xóa dữ liệu.</p>
+    </div>
   </div>
+
   <section class="content-card">
     <form method="post" class="stacked-form" novalidate>
       {% csrf_token %}
       {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
       {% for field in form %}
         <div class="form-field {% if field.name == 'identity_confirmed' %}notice-acknowledgement{% endif %}">
-          <label for="{{ field.id_for_label }}">{% if field.name == 'identity_confirmed' %}{{ field }} <span>{{ field.label }}</span>{% else %}{{ field.label }}{% endif %}</label>
+          <label for="{{ field.id_for_label }}">
+            {% if field.name == 'identity_confirmed' %}
+              {{ field }} <span>{{ field.label }}</span>
+            {% else %}
+              {{ field.label }}
+            {% endif %}
+          </label>
           {% if field.name != 'identity_confirmed' %}{{ field }}{% endif %}
           {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
           {% if field.errors %}<div class="field-error">{{ field.errors|striptags }}</div>{% endif %}
         </div>
       {% endfor %}
-      <div class="button-row"><button class="button" type="submit">Gửi yêu cầu</button><a class="button button-secondary" href="{% url 'privacy:dsar_list' %}">Hủy</a></div>
+      <div class="button-row">
+        <button class="button" type="submit">Gửi yêu cầu</button>
+        <a class="button button-secondary" href="{% url 'privacy:dsar_list' %}">Hủy</a>
+      </div>
     </form>
   </section>
 </div>

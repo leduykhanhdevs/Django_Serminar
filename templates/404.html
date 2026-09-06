@@ -1,10 +1,12 @@
 {% extends "privacy/base.html" %}
+
 {% block content %}
-<div class="card" style="text-align: center; padding: 3rem 1rem;">
-  <h1>404 - Không tìm thấy trang</h1>
-  <p class="muted">Đường dẫn bạn yêu cầu không tồn tại hoặc đã bị thay đổi.</p>
-  <div style="margin-top: 1.5rem;">
-    <a href="{% url 'privacy:landing' %}" class="button">Về trang chủ</a>
+<div class="card" style="max-width: 580px; margin: 4rem auto; text-align: center; padding: 3.5rem 2rem;">
+  <div class="eyebrow" style="margin-bottom: 1.25rem;">Lỗi điều hướng</div>
+  <h1 style="font-size: 2.2rem; margin-bottom: 0.75rem;">404 — Không tìm thấy trang</h1>
+  <p class="muted" style="margin-bottom: 2rem;">Đường dẫn bạn yêu cầu không tồn tại, đã bị gỡ bỏ hoặc bạn không có quyền truy cập trong tenant này.</p>
+  <div>
+    <a href="{% url 'privacy:landing' %}" class="button">Về trang chủ DataShield</a>
   </div>
 </div>
 {% endblock %}

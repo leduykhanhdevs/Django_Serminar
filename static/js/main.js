@@ -1,38 +1,36 @@
 /**
- * DataShield: Enterprise Privacy & Compliance Platform
- * Interactive Animations & GSAP Controller
- * Rock-solid visibility: Zero FOUC / Zero FOIC. All elements visible by default.
+ * DataShield: Executive Privacy & Compliance Platform
+ * Interactive Motion Controller & GSAP Enhancements
+ * Guaranteed FOIC-safe (Flash of Invisible Content safety).
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Ensure all elements are immediately visible
-  document.querySelectorAll(".hero, .feature-card, .metric-card, .content-card, .notice-panel, .hero-panel")
+  // 1. Mandatory FOIC-Safety: Ensure immediate visibility of all layout elements
+  document.querySelectorAll(".hero, .feature-card, .metric-card, .content-card, .notice-panel, .hero-panel, .card")
     .forEach(el => {
       el.style.opacity = "1";
       el.style.visibility = "visible";
     });
 
-  // Verify GSAP availability
+  // 2. Fallback check for GSAP
   if (typeof gsap === "undefined") {
-    console.info("GSAP running in static fallback mode.");
     return;
   }
 
-  // Check prefers-reduced-motion
+  // 3. Respect user accessibility preferences (prefers-reduced-motion)
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (prefersReduced) {
-    console.info("Reduced motion active. Animations disabled.");
     return;
   }
 
-  // 1. Subtle, high-performance entrance (ONLY translateY, NEVER opacity 0)
+  // 4. Subtle, professional entrance (translateY ONLY, NO opacity: 0)
   try {
     const heroElements = document.querySelectorAll(".hero h1, .hero .lead, .hero .button-row, .hero-panel");
     if (heroElements.length > 0) {
       gsap.from(heroElements, {
-        y: 12,
-        duration: 0.4,
-        stagger: 0.08,
+        y: 8,
+        duration: 0.35,
+        stagger: 0.06,
         ease: "power2.out",
         clearProps: "all"
       });
@@ -41,18 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const cards = document.querySelectorAll(".metric-card, .feature-card");
     if (cards.length > 0) {
       gsap.from(cards, {
-        y: 16,
-        duration: 0.45,
-        stagger: 0.06,
+        y: 10,
+        duration: 0.4,
+        stagger: 0.05,
         ease: "power2.out",
         clearProps: "transform"
       });
     }
   } catch (err) {
-    console.warn("GSAP entrance notice:", err);
+    // Non-blocking presentation fallback
   }
 
-  // 2. Telemetry Number Counters (Smooth count up without hiding initial values)
+  // 5. Telemetry Number Counters (Smooth count up without hiding initial values)
   try {
     const counters = document.querySelectorAll("[data-counter-target]");
     counters.forEach((el) => {
@@ -62,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       gsap.to(obj, {
         val: target,
-        duration: 1.2,
+        duration: 1.1,
         ease: "power2.out",
         onUpdate: () => {
           el.textContent = Math.round(obj.val) + suffix;
@@ -70,16 +68,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   } catch (err) {
-    console.warn("Counter animation notice:", err);
+    // Non-blocking
   }
 
-  // 3. Interactive Micro-Interactions: Card Tilt & Subtle Glow
+  // 6. Interactive Micro-Interactions: Subtle 1.5px lift (NO neon glow)
   const interactiveCards = document.querySelectorAll(".feature-card, .metric-card, .hero-panel");
   interactiveCards.forEach((card) => {
     card.addEventListener("mouseenter", () => {
       gsap.to(card, {
-        y: -3,
-        duration: 0.2,
+        y: -2,
+        duration: 0.18,
         ease: "power1.out",
       });
     });
@@ -87,25 +85,23 @@ document.addEventListener("DOMContentLoaded", () => {
     card.addEventListener("mouseleave", () => {
       gsap.to(card, {
         y: 0,
-        duration: 0.25,
+        duration: 0.22,
         ease: "power1.out",
       });
     });
   });
 
-  // 4. Flash Alerts Auto-dismiss
+  // 7. Flash Alerts Auto-dismiss
   const flashes = document.querySelectorAll(".flash");
   flashes.forEach((flash) => {
     gsap.delayedCall(5, () => {
       gsap.to(flash, {
-        x: 40,
+        x: 30,
         opacity: 0,
-        duration: 0.4,
+        duration: 0.35,
         ease: "power2.in",
         onComplete: () => flash.remove(),
       });
     });
   });
-
-  console.info("🛡️ DataShield UI & GSAP Engine initialized.");
 });

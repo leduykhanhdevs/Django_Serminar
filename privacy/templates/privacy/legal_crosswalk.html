@@ -2,7 +2,11 @@
 
 {% block content %}
 <div class="page-heading">
-  <div><p class="eyebrow">Knowledge base có phiên bản</p><h1>Đối chiếu khung pháp lý</h1><p>Mỗi rule cần được kiểm tra theo nguồn, hiệu lực, phạm vi hoạt động xử lý và ý kiến legal review khi phù hợp.</p></div>
+  <div>
+    <p class="eyebrow">Knowledge base có phiên bản</p>
+    <h1>Đối chiếu khung pháp lý</h1>
+    <p>Mỗi rule cần được kiểm tra theo nguồn, hiệu lực, phạm vi hoạt động xử lý và ý kiến legal review khi phù hợp.</p>
+  </div>
 </div>
 
 <section class="legal-notice">
@@ -16,7 +20,14 @@
       <h2>{{ rule.title }}</h2>
       <p><span class="status {% if rule.framework == 'Đối chiếu lịch sử' %}status-withdrawn{% else %}status-approved{% endif %}">{{ rule.status }}</span></p>
       <p>{{ rule.scope }}</p>
-      {% if rule.source_url %}<p><a class="text-link" href="{{ rule.source_url }}" rel="noreferrer">Mở văn bản nguồn</a></p>{% endif %}
+      {% if rule.source_url %}
+        <p>
+          <a class="text-link" href="{{ rule.source_url }}" rel="noreferrer">
+            <span>Mở văn bản nguồn</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </p>
+      {% endif %}
       {% if rule.legal_review %}<p class="review-flag">Cần legal review trước khi áp dụng cho hoạt động thực tế.</p>{% endif %}
     </article>
   {% endfor %}
@@ -24,11 +35,47 @@
 
 {% if rule_versions %}
   <section class="content-card">
-    <div class="card-heading"><h2>Rule catalog có phiên bản</h2><span class="muted">Cấu hình theo phiên bản và ngày hiệu lực</span></div>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Khung</th><th>Rule / phiên bản</th><th>Hiệu lực</th><th>Nguồn</th></tr></thead>
-      <tbody>{% for version in rule_versions %}<tr><td>{{ version.legal_rule.get_jurisdiction_display }}</td><td><strong>{{ version.legal_rule.title }}</strong><br><span class="muted">{{ version.version }}{% if version.legal_review_required %} · cần legal review{% endif %}</span></td><td>{{ version.effective_from|date:"d/m/Y" }}{% if version.effective_until %} – {{ version.effective_until|date:"d/m/Y" }}{% endif %}</td><td>{% if version.source_url %}<a class="text-link" href="{{ version.source_url }}" rel="noreferrer">Văn bản nguồn</a>{% else %}{{ version.source_reference|default:"—" }}{% endif %}</td></tr>{% endfor %}</tbody>
-    </table></div>
+    <div class="card-heading">
+      <h2>Rule catalog có phiên bản</h2>
+      <span class="muted">Cấu hình theo phiên bản và ngày hiệu lực</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Khung</th>
+            <th>Rule / phiên bản</th>
+            <th>Hiệu lực</th>
+            <th>Nguồn</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for version in rule_versions %}
+            <tr>
+              <td>{{ version.legal_rule.get_jurisdiction_display }}</td>
+              <td>
+                <strong>{{ version.legal_rule.title }}</strong><br>
+                <span class="muted font-mono">{{ version.version }}{% if version.legal_review_required %} · cần legal review{% endif %}</span>
+              </td>
+              <td class="font-mono">
+                {{ version.effective_from|date:"d/m/Y" }}
+                {% if version.effective_until %} – {{ version.effective_until|date:"d/m/Y" }}{% endif %}
+              </td>
+              <td>
+                {% if version.source_url %}
+                  <a class="text-link" href="{{ version.source_url }}" rel="noreferrer">
+                    <span>Văn bản nguồn</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                {% else %}
+                  {{ version.source_reference|default:"—" }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </section>
 {% endif %}
 {% endblock %}
